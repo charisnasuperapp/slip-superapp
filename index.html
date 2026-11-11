@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slip Superapp - Generator & Download Slip Gaji Praktis dan Gratis</title>
+  <meta name="description" content="Buat slip gaji karyawan dengan mudah dan download file PDF gratis dalam hitungan detik dengan Slip Superapp Generator." />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e53f6a'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/><polyline points='14 2 14 8 20 8'/><line x1='16' y1='13' x2='8' y2='13'/><line x1='16' y1='17' x2='8' y2='17'/><polyline points='10 9 9 9 8 9'/></svg>" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- HTML2Canvas & jsPDF for instant Client-side PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: 'var(--theme-color, #E53F6A)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --theme-color: #E53F6A;
+      --theme-color-hover: #c93056;
+      --theme-color-light: #fdf2f4;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #F8FAFC;
+      color: #1E293B;
+    }
+
+    .theme-bg {
+      background-color: var(--theme-color) !important;
+    }
+
+    .theme-text {
+      color: var(--theme-color) !important;
+    }
+
+    .theme-border {
+      border-color: var(--theme-color) !important;
+    }
+
+    .theme-ring:focus {
+      --tw-ring-color: var(--theme-color) !important;
+    }
+
+    /* Print Specific Rules */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #slip-printable-area, #slip-printable-area * {
+        visibility: visible;
+      }
+      #slip-printable-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 24px;
+        box-shadow: none !important;
+        border: 1px solid #E2E8F0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      input, select {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+      }
+      .btn-delete-row {
+        display: none !important;
+      }
+    }
+
+    /* Custom inline input styling for sleek editable look */
+    .editable-input {
+      background: transparent;
+      border-bottom: 1px dashed transparent;
+      transition: all 0.2s ease;
+    }
+    .editable-input:hover {
+      border-bottom-color: #CBD5E1;
+      background: rgba(241, 245, 249, 0.5);
+    }
+    .editable-input:focus {
+      outline: none;
+      border-bottom-color: var(--theme-color);
+      background: #FFFFFF;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    /* Hide arrow spinners on number input */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    .color-swatch {
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .color-swatch:hover {
+      transform: scale(1.15);
+      z-index: 10;
+    }
+    .color-swatch.active {
+      transform: scale(1.15);
+      box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--theme-color);
+    }
+  </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+
+  <!-- TOP HEADER / HERO -->
+  <header class="max-w-6xl mx-auto text-center mb-8 no-print">
+    <div class="flex items-center justify-center gap-2 mb-3">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-pink-100 text-[#E53F6A]">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+        Superapp Payroll Tool
+      </span>
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+        100% Gratis & Tanpa Registrasi
+      </span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
+      Buat &amp; Download Slip Gaji dalam Satu Klik
+    </h1>
+    <p class="text-slate-600 max-w-2xl mx-auto text-sm sm:text-base mb-6">
+      Download dan nikmati kemudahan buat slip gaji karyawan Anda secara gratis, rapi, dan instan di sini.
+    </p>
+
+    <!-- Top Action Buttons -->
+    <div class="flex flex-wrap items-center justify-center gap-3">
+      <button onclick="handleDownloadPDF()" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-white font-semibold text-sm shadow-md hover:opacity-95 transition-all theme-bg" id="btn-top-download">
+        <i data-lucide="download" class="w-4 h-4"></i>
+        <span>Download Slip Gaji</span>
+      </button>
+
+      <button onclick="window.print()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-white border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-all shadow-sm">
+        <i data-lucide="printer" class="w-4 h-4"></i>
+        <span>Cetak Slip</span>
+      </button>
+
+      <button onclick="handleShareWhatsApp()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 text-white font-semibold text-sm hover:bg-emerald-700 transition-all shadow-sm">
+        <i data-lucide="message-circle" class="w-4 h-4"></i>
+        <span>Kirim WhatsApp</span>
+      </button>
+
+      <button onclick="resetToDefaults()" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-slate-100 text-slate-600 font-medium text-sm hover:bg-slate-200 transition-all">
+        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        <span>Reset</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN SLIP GAJI DOCUMENT (PRINTABLE & EDITABLE) -->
+  <main class="max-w-5xl mx-auto mb-8">
+    <div id="slip-printable-area" class="bg-white rounded-xl shadow-lg border border-slate-200 p-6 sm:p-10 transition-all">
+      
+      <!-- TOP BANNER: Pribadi & Rahasia -->
+      <div class="border border-slate-300 rounded px-4 py-2 text-center mb-6">
+        <input 
+          type="text" 
+          id="confidential-text" 
+          value="Pribadi &amp; Rahasia" 
+          class="text-center font-bold text-sm tracking-wide uppercase theme-text w-full editable-input focus:ring-0" 
+          title="Klik untuk mengubah label kerahasiaan"
+        />
+      </div>
+
+      <!-- HEADER: Company Name & Logo -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-200 mb-6">
+        <div class="flex-1">
+          <label class="block text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1 no-print">Nama Perusahaan</label>
+          <input 
+            type="text" 
+            id="company-name" 
+            value="Nama Perusahaan Anda" 
+            class="text-2xl sm:text-3xl font-extrabold text-slate-900 w-full editable-input px-1 py-0.5 rounded"
+            placeholder="Ketik Nama Perusahaan..."
+          />
+        </div>
+
+        <!-- Logo Upload & Display -->
+        <div class="flex flex-col items-end">
+          <div id="logo-container" class="relative group cursor-pointer border-2 border-dashed border-slate-200 hover:border-slate-400 rounded-lg p-2 transition-all min-w-[140px] h-[72px] flex items-center justify-center bg-slate-50">
+            <img id="company-logo" src="" alt="Company Logo" class="max-h-14 max-w-[180px] object-contain hidden" />
+            <div id="logo-placeholder" class="text-center">
+              <i data-lucide="image-plus" class="w-5 h-5 mx-auto text-slate-400 group-hover:text-slate-600 mb-1"></i>
+              <span class="text-xs text-slate-500 font-medium group-hover:text-slate-700 block">Upload Logo</span>
+            </div>
+            <input type="file" id="logo-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" title="Upload Logo Perusahaan" />
+          </div>
+          <button id="btn-remove-logo" onclick="removeLogo()" class="text-[11px] text-red-500 hover:text-red-700 mt-1 hidden no-print">
+            Hapus Logo
+          </button>
+        </div>
+      </div>
+
+      <!-- METADATA GRID: Periode, Karyawan, Departemen, Status -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3 pb-6 border-b border-slate-200 text-sm mb-6">
+        
+        <!-- Kolom Kiri -->
+        <div class="space-y-2.5">
+          <div class="flex items-center">
+            <span class="w-36 text-slate-500 font-medium">Slip Gaji Periode</span>
+            <span class="mr-2 text-slate-400">:</span>
+            <input 
+              type="text" 
+              id="period-text" 
+              value="01 Nov 2026 - 30 Nov 2026" 
+              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
+            />
+          </div>
+
+          <div class="flex items-center">
+            <span class="w-36 text-slate-500 font-medium">Nama</span>
+            <span class="mr-2 text-slate-400">:</span>
+            <input 
+              type="text" 
+              id="employee-name" 
+              value="Nama Karyawan" 
+              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
+            />
+          </div>
+
+          <div class="flex items-center">
+            <span class="w-36 text-slate-500 font-medium">ID Karyawan</span>
+            <span class="mr-2 text-slate-400">:</span>
+            <input 
+              type="text" 
+              id="employee-id" 
+              value="123456789" 
+              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
+            />
+          </div>
+
+          <div class="flex items-center">
+            <span class="w-36 text-slate-500 font-medium">Bagian</span>
+            <span class="mr-2 text-slate-400">:</span>
+            <input 
+              type="text" 
+              id="employee-department" 
+              value="CEO" 
+              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
+            />
+          </div>
+
+          <div class="flex items-center">
+            <span class="w-36 text-slate-500 font-medium">Job Title</span>
+            <span class="mr-2 text-slate-400">:</span>
+            <input 
+              type="text" 
+              id="employee-job-title" 
+              value="Commissioner" 
+              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
+            />
+          </div>
+        </div>
+
+        <!-- Kolom Kanan -->
+        <div class="space-y-2.5">
+          <div class="flex items-center">
+            <span class="w-40 text-slate-500 font-medium">Golongan</span>
+            <span class="mr-2 text-slate-400">:</span>
+            <input 
+              type="text" 
+              id="employee-grade" 
+              value="BOD" 
+              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
+            />
+          </div>
+
+          <div class="flex items-center">
+            <span class="w-40 text-slate-500 font-medium">Status Karyawan</span>
+            <span class="mr-2 text-slate-400">:</span>
+            <select id="employee-status" class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5 cursor-pointer">
+              <option value="Tetap" selected>Tetap</option>
+              <option value="Kontrak">Kontrak</option>
+              <option value="Probation">Probation</option>
+              <option value="Freelance">Freelance</option>
+              <option value="Magang">Magang</option>
+            </select>
+          </div>
+
+          <div class="flex items-center">
+            <span class="w-40 text-slate-500 font-medium">Status PTKP</span>
+            <span class="mr-2 text-slate-400">:</span>
+            <select id="employee-ptkp" class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5 cursor-pointer">
+              <option value="TK0" selected>TK0 (Tidak Kawin - 0 Tanggungan)</option>
+              <option value="TK1">TK1 (Tidak Kawin - 1 Tanggungan)</option>
+              <option value="TK2">TK2 (Tidak Kawin - 2 Tanggungan)</option>
+              <option value="TK3">TK3 (Tidak Kawin - 3 Tanggungan)</option>
+              <option value="K0">K0 (Kawin - 0 Tanggungan)</option>
+              <option value="K1">K1 (Kawin - 1 Tanggungan)</option>
+              <option value="K2">K2 (Kawin - 2 Tanggungan)</option>
+              <option value="K3">K3 (Kawin - 3 Tanggungan)</option>
+            </select>
+          </div>
+
+          <div class="flex items-center">
+            <span class="w-40 text-slate-500 font-medium">Tanggal Bergabung</span>
+            <span class="mr-2 text-slate-400">:</span>
+            <input 
+              type="text" 
+              id="employee-join-date" 
+              value="11 Nov 2026" 
+              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- TABLES: Pendapatan (Kiri) & Potongan (Kanan) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        
+        <!-- TABEL PENDAPATAN -->
+        <div class="border border-slate-200 rounded-lg overflow-hidden flex flex-col justify-between">
+          <div>
+            <!-- Table Header -->
+            <div class="theme-bg text-white px-4 py-2.5 flex items-center justify-between font-bold text-sm tracking-wide">
+              <span>Komponen Pendapatan</span>
+              <span>Jumlah</span>
+            </div>
+
+            <!-- Table Rows Container -->
+            <div id="income-rows-container" class="divide-y divide-slate-100 text-sm">
+              <!-- Dynamic Rows inserted via JS -->
+            </div>
+          </div>
+
+          <div>
+            <!-- Add Row Button -->
+            <div class="p-2 bg-slate-50 border-t border-slate-100 no-print">
+              <button onclick="addIncomeRow()" class="w-full py-1.5 px-3 rounded text-xs font-semibold theme-text hover:bg-slate-100 flex items-center justify-center gap-1.5 transition-all">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                <span>Tambah Baris</span>
+              </button>
+            </div>
+
+            <!-- Total Pendapatan -->
+            <div class="bg-slate-100/80 px-4 py-3 flex items-center justify-between font-bold text-sm border-t border-slate-200">
+              <span class="text-slate-800">Total Pendapatan</span>
+              <span id="total-income-display" class="theme-text text-base">Rp 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABEL POTONGAN -->
+        <div class="border border-slate-200 rounded-lg overflow-hidden flex flex-col justify-between">
+          <div>
+            <!-- Table Header -->
+            <div class="theme-bg text-white px-4 py-2.5 flex items-center justify-between font-bold text-sm tracking-wide">
+              <span>Komponen Potongan</span>
+              <span>Jumlah</span>
+            </div>
+
+            <!-- Table Rows Container -->
+            <div id="deduction-rows-container" class="divide-y divide-slate-100 text-sm">
+              <!-- Dynamic Rows inserted via JS -->
+            </div>
+          </div>
+
+          <div>
+            <!-- Add Row Button -->
+            <div class="p-2 bg-slate-50 border-t border-slate-100 no-print">
+              <button onclick="addDeductionRow()" class="w-full py-1.5 px-3 rounded text-xs font-semibold theme-text hover:bg-slate-100 flex items-center justify-center gap-1.5 transition-all">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                <span>Tambah Baris</span>
+              </button>
+            </div>
+
+            <!-- Total Potongan -->
+            <div class="bg-slate-100/80 px-4 py-3 flex items-center justify-between font-bold text-sm border-t border-slate-200">
+              <span class="text-slate-800">Total Potongan</span>
+              <span id="total-deduction-display" class="text-red-600 text-base">Rp 0</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BOTTOM SECTION: Bank Info (Kiri) & Take Home Pay (Kanan) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end pt-4 border-t border-slate-200">
+        
+        <!-- Info Rekening Bank -->
+        <div class="space-y-2 text-sm">
+          <div class="flex items-center">
+            <span class="w-44 text-slate-500 font-medium">Nama Bank</span>
+            <span class="mr-2 text-slate-400">:</span>
+            <input 
+              type="text" 
+              id="bank-name" 
+              value="BCA" 
+              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
+            />
+          </div>
+
+          <div class="flex items-center">
+            <span class="w-44 text-slate-500 font-medium">Nomor Rekening</span>
+            <span class="mr-2 text-slate-400">:</span>
+            <input 
+              type="text" 
+              id="bank-number" 
+              value="12341234" 
+              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
+            />
+          </div>
+
+          <div class="flex items-center">
+            <span class="w-44 text-slate-500 font-medium">Nama Pemilik Rekening</span>
+            <span class="mr-2 text-slate-400">:</span>
+            <input 
+              type="text" 
+              id="bank-owner" 
+              value="Nama Pemilik Rekening" 
+              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
+            />
+          </div>
+        </div>
+
+        <!-- Take Home Pay Card -->
+        <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 text-right">
+          <div class="text-xs uppercase tracking-wider font-bold text-slate-500 mb-1">
+            Take Home Pay
+          </div>
+          <div id="take-home-pay-display" class="text-2xl sm:text-3xl font-black theme-text tracking-tight mb-1">
+            Rp 0
+          </div>
+          <div id="terbilang-display" class="text-xs italic text-slate-500">
+            Nol Rupiah
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SLIP FOOTER NOTE / TANDA TANGAN -->
+      <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+        <div>
+          * Slip gaji ini dibuat secara otomatis melalui Slip Superapp dan sah tanpa tanda tangan basah.
+        </div>
+        <div class="text-right">
+          Dicetak pada: <span id="current-print-date"></span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- CONTROLS & COLOR PICKER SECTION (NO PRINT) -->
+  <section class="max-w-5xl mx-auto space-y-6 no-print">
+    
+    <!-- Middle Download Button -->
+    <div class="text-center">
+      <button onclick="handleDownloadPDF()" class="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full text-white font-bold text-base shadow-lg hover:shadow-xl transition-all theme-bg hover:opacity-95" id="btn-mid-download">
+        <i data-lucide="download" class="w-5 h-5"></i>
+        <span>Download Slip Gaji</span>
+      </button>
+    </div>
+
+    <!-- THEME COLOR PALETTE CARD -->
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md border border-slate-200 p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600">Pilih Warna Tema</h3>
+        <span id="current-color-hex" class="text-xs font-mono font-bold text-slate-500">#E53F6A</span>
+      </div>
+
+      <!-- Color Preview Box (Matches the large preview in Gajihub) -->
+      <div id="theme-preview-box" class="w-full h-14 rounded-lg flex items-center justify-center text-white font-bold text-sm tracking-wide shadow-inner mb-4 transition-all theme-bg">
+        <span id="theme-preview-text">#E53F6A</span>
+      </div>
+
+      <!-- Swatches Grid (23 colors matching Gajihub + Custom) -->
+      <div id="color-swatches-grid" class="grid grid-cols-8 sm:grid-cols-12 gap-2">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <!-- Custom Color Picker Row -->
+      <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        <span>Atau warna custom:</span>
+        <div class="flex items-center gap-2">
+          <input type="color" id="custom-color-picker" value="#E53F6A" class="w-7 h-7 rounded border-0 cursor-pointer p-0" onchange="setThemeColor(this.value)" />
+          <input type="text" id="custom-color-hex-input" value="#E53F6A" maxlength="7" class="w-20 px-2 py-1 text-xs border border-slate-300 rounded font-mono uppercase text-center" oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)) setThemeColor(this.value)" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Download Button -->
+    <div class="text-center pt-2">
+      <button onclick="handleDownloadPDF()" class="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full text-white font-bold text-base shadow-lg hover:shadow-xl transition-all theme-bg hover:opacity-95" id="btn-bottom-download">
+        <i data-lucide="download" class="w-5 h-5"></i>
+        <span>Download Slip Gaji</span>
+      </button>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="pt-8 pb-4 text-center text-xs text-slate-400 border-t border-slate-200">
+      <p class="font-medium text-slate-600 mb-1">
+        Slip Superapp &bull; Bagian dari Ekosistem <a href="https://github.com/charisnasuperapp" target="_blank" class="hover:underline font-semibold theme-text">CHARISNA SuperApp</a>
+      </p>
+      <p>
+        Generator slip gaji aman, tidak menyimpan data ke server luar, 100% diproses di browser Anda.
+      </p>
+    </footer>
+
+  </section>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script>
+    // --- COLOR PALETTE (From Gajihub reverse engineering) ---
+    const THEME_PALETTE = [
+      '#E53F6A', '#64748B', '#6B7280', '#71717A', 
+      '#737373', '#78716C', '#EF4444', '#F97316', 
+      '#F59E0B', '#EAB308', '#84CC16', '#22C55E', 
+      '#10B981', '#14B8A6', '#06B6D4', '#0EA5E9', 
+      '#3B82F6', '#6366F1', '#8B5CF6', '#A855F7', 
+      '#D946EF', '#EC4899', '#F43F5E'
+    ];
+
+    let currentThemeColor = '#E53F6A';
+
+    // --- INITIAL DATA MODEL ---
+    let incomeList = [
+      { id: 1, name: 'Gaji Pokok', amount: 5000000 },
+      { id: 2, name: 'Tunjangan Operasional', amount: 1500000 },
+      { id: 3, name: 'Tunjangan Komunikasi', amount: 500000 }
+    ];
+
+    let deductionList = [
+      { id: 1, name: 'BPJS Ketenagakerjaan', amount: 150000 },
+      { id: 2, name: 'BPJS Kesehatan', amount: 50000 },
+      { id: 3, name: 'PPh 21', amount: 125000 }
+    ];
+
+    let nextIncomeId = 4;
+    let nextDeductionId = 4;
+
+    // --- NUMBER FORMATTING UTILS ---
+    function formatCurrency(num) {
+      if (isNaN(num) || num === null) num = 0;
+      return 'Rp ' + Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function cleanNumber(val) {
+      if (typeof val === 'number') return val;
+      if (!val) return 0;
+      const clean = val.toString().replace(/[^0-9]/g, '');
+      return parseInt(clean, 10) || 0;
+    }
+
+    // --- TERBILANG INDONESIA ---
+    function terbilang(angka) {
+      angka = Math.floor(Math.abs(angka));
+      const bilangan = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh', 'Sebelas'];
+      let hasil = '';
+
+      if (angka < 12) {
+        hasil = ' ' + bilangan[angka];
+      } else if (angka < 20) {
+        hasil = terbilang(angka - 10) + ' Belas';
+      } else if (angka < 100) {
+        hasil = terbilang(Math.floor(angka / 10)) + ' Puluh ' + terbilang(angka % 10);
+      } else if (angka < 200) {
+        hasil = ' Seratus ' + terbilang(angka - 100);
+      } else if (angka < 1000) {
+        hasil = terbilang(Math.floor(angka / 100)) + ' Ratus ' + terbilang(angka % 100);
+      } else if (angka < 2000) {
+        hasil = ' Seribu ' + terbilang(angka - 1000);
+      } else if (angka < 1000000) {
+        hasil = terbilang(Math.floor(angka / 1000)) + ' Ribu ' + terbilang(angka % 1000);
+      } else if (angka < 1000000000) {
+        hasil = terbilang(Math.floor(angka / 1000000)) + ' Juta ' + terbilang(angka % 1000000);
+      } else if (angka < 1000000000000) {
+        hasil = terbilang(Math.floor(angka / 1000000000)) + ' Miliar ' + terbilang(angka % 1000000000);
+      } else if (angka < 1000000000000000) {
+        hasil = terbilang(Math.floor(angka / 1000000000000)) + ' Triliun ' + terbilang(angka % 1000000000000);
+      }
+
+      return hasil.replace(/\s+/g, ' ').trim();
+    }
+
+    // --- RENDER TABLES ---
+    function renderIncomeRows() {
+      const container = document.getElementById('income-rows-container');
+      container.innerHTML = '';
+
+      incomeList.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between px-4 py-2 hover:bg-slate-50 group transition-all';
+        row.innerHTML = `
+          <div class="flex-1 flex items-center gap-2">
+            <input 
+              type="text" 
+              value="${item.name}" 
+              placeholder="Nama Komponen"
+              onchange="updateIncomeName(${item.id}, this.value)"
+              class="w-full font-medium text-slate-700 editable-input px-1 py-0.5 rounded"
+            />
+          </div>
+          <div class="flex items-center gap-2 w-48 justify-end">
+            <span class="text-xs text-slate-400 font-medium">Rp</span>
+            <input 
+              type="text" 
+              value="${item.amount.toLocaleString('id-ID')}" 
+              placeholder="0"
+              onfocus="this.value = cleanNumber(this.value) || ''"
+              onblur="this.value = (cleanNumber(this.value)).toLocaleString('id-ID')"
+              oninput="updateIncomeAmount(${item.id}, this.value)"
+              class="w-32 text-right font-semibold text-slate-800 editable-input px-1 py-0.5 rounded"
+            />
+            <button 
+              type="button" 
+              onclick="removeIncomeRow(${item.id})" 
+              class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1 no-print btn-delete-row"
+              title="Hapus Baris"
+            >
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      lucide.createIcons();
+      recalculateTotals();
+    }
+
+    function renderDeductionRows() {
+      const container = document.getElementById('deduction-rows-container');
+      container.innerHTML = '';
+
+      deductionList.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between px-4 py-2 hover:bg-slate-50 group transition-all';
+        row.innerHTML = `
+          <div class="flex-1 flex items-center gap-2">
+            <input 
+              type="text" 
+              value="${item.name}" 
+              placeholder="Nama Komponen"
+              onchange="updateDeductionName(${item.id}, this.value)"
+              class="w-full font-medium text-slate-700 editable-input px-1 py-0.5 rounded"
+            />
+          </div>
+          <div class="flex items-center gap-2 w-48 justify-end">
+            <span class="text-xs text-slate-400 font-medium">Rp</span>
+            <input 
+              type="text" 
+              value="${item.amount.toLocaleString('id-ID')}" 
+              placeholder="0"
+              onfocus="this.value = cleanNumber(this.value) || ''"
+              onblur="this.value = (cleanNumber(this.value)).toLocaleString('id-ID')"
+              oninput="updateDeductionAmount(${item.id}, this.value)"
+              class="w-32 text-right font-semibold text-slate-800 editable-input px-1 py-0.5 rounded"
+            />
+            <button 
+              type="button" 
+              onclick="removeDeductionRow(${item.id})" 
+              class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1 no-print btn-delete-row"
+              title="Hapus Baris"
+            >
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      lucide.createIcons();
+      recalculateTotals();
+    }
+
+    // --- ROW MODIFICATIONS ---
+    function addIncomeRow() {
+      incomeList.push({ id: nextIncomeId++, name: 'Nama Komponen', amount: 0 });
+      renderIncomeRows();
+    }
+
+    function removeIncomeRow(id) {
+      if (incomeList.length <= 1) {
+        incomeList = [{ id: nextIncomeId++, name: 'Nama Komponen', amount: 0 }];
+      } else {
+        incomeList = incomeList.filter(item => item.id !== id);
+      }
+      renderIncomeRows();
+    }
+
+    function updateIncomeName(id, val) {
+      const item = incomeList.find(x => x.id === id);
+      if (item) item.name = val;
+    }
+
+    function updateIncomeAmount(id, val) {
+      const item = incomeList.find(x => x.id === id);
+      if (item) item.amount = cleanNumber(val);
+      recalculateTotals();
+    }
+
+    function addDeductionRow() {
+      deductionList.push({ id: nextDeductionId++, name: 'Nama Komponen', amount: 0 });
+      renderDeductionRows();
+    }
+
+    function removeDeductionRow(id) {
+      if (deductionList.length <= 1) {
+        deductionList = [{ id: nextDeductionId++, name: 'Nama Komponen', amount: 0 }];
+      } else {
+        deductionList = deductionList.filter(item => item.id !== id);
+      }
+      renderDeductionRows();
+    }
+
+    function updateDeductionName(id, val) {
+      const item = deductionList.find(x => x.id === id);
+      if (item) item.name = val;
+    }
+
+    function updateDeductionAmount(id, val) {
+      const item = deductionList.find(x => x.id === id);
+      if (item) item.amount = cleanNumber(val);
+      recalculateTotals();
+    }
+
+    // --- RECALCULATE TOTALS ---
+    function recalculateTotals() {
+      const totalIncome = incomeList.reduce((sum, item) => sum + (item.amount || 0), 0);
+      const totalDeduction = deductionList.reduce((sum, item) => sum + (item.amount || 0), 0);
+      const takeHomePay = Math.max(0, totalIncome - totalDeduction);
+
+      document.getElementById('total-income-display').innerText = formatCurrency(totalIncome);
+      document.getElementById('total-deduction-display').innerText = formatCurrency(totalDeduction);
+      document.getElementById('take-home-pay-display').innerText = formatCurrency(takeHomePay);
+
+      // Terbilang
+      if (takeHomePay === 0) {
+        document.getElementById('terbilang-display').innerText = 'Nol Rupiah';
+      } else {
+        document.getElementById('terbilang-display').innerText = terbilang(takeHomePay) + ' Rupiah';
+      }
+    }
+
+    // --- THEME COLOR MANAGEMENT ---
+    function setThemeColor(hex) {
+      currentThemeColor = hex;
+      document.documentElement.style.setProperty('--theme-color', hex);
+      
+      document.getElementById('current-color-hex').innerText = hex.toUpperCase();
+      document.getElementById('theme-preview-box').style.backgroundColor = hex;
+      document.getElementById('theme-preview-text').innerText = hex.toUpperCase();
+      document.getElementById('custom-color-picker').value = hex;
+      document.getElementById('custom-color-hex-input').value = hex.toUpperCase();
+
+      // Update swatch active status
+      document.querySelectorAll('.color-swatch').forEach(swatch => {
+        if (swatch.dataset.color.toLowerCase() === hex.toLowerCase()) {
+          swatch.classList.add('active');
+        } else {
+          swatch.classList.remove('active');
+        }
+      });
+    }
+
+    function initColorPalette() {
+      const container = document.getElementById('color-swatches-grid');
+      container.innerHTML = '';
+
+      THEME_PALETTE.forEach(color => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `color-swatch w-7 h-7 rounded-md cursor-pointer transition-transform ${color.toLowerCase() === currentThemeColor.toLowerCase() ? 'active' : ''}`;
+        btn.style.backgroundColor = color;
+        btn.dataset.color = color;
+        btn.title = color;
+        btn.onclick = () => setThemeColor(color);
+        container.appendChild(btn);
+      });
+    }
+
+    // --- LOGO UPLOAD & REMOVE ---
+    document.getElementById('logo-input').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 2 * 1024 * 1024) {
+          alert('Ukuran file maksimal 2 MB');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const img = document.getElementById('company-logo');
+          img.src = evt.target.result;
+          img.classList.remove('hidden');
+          document.getElementById('logo-placeholder').classList.add('hidden');
+          document.getElementById('btn-remove-logo').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function removeLogo() {
+      const img = document.getElementById('company-logo');
+      img.src = '';
+      img.classList.add('hidden');
+      document.getElementById('logo-placeholder').classList.remove('hidden');
+      document.getElementById('btn-remove-logo').classList.add('hidden');
+      document.getElementById('logo-input').value = '';
+    }
+
+    // --- RESET FUNCTION ---
+    function resetToDefaults() {
+      if (!confirm('Kembalikan template ke pengaturan awal?')) return;
+
+      document.getElementById('company-name').value = 'Nama Perusahaan Anda';
+      document.getElementById('period-text').value = '01 Nov 2026 - 30 Nov 2026';
+      document.getElementById('employee-name').value = 'Nama Karyawan';
+      document.getElementById('employee-id').value = '123456789';
+      document.getElementById('employee-department').value = 'CEO';
+      document.getElementById('employee-job-title').value = 'Commissioner';
+      document.getElementById('employee-grade').value = 'BOD';
+      document.getElementById('employee-status').value = 'Tetap';
+      document.getElementById('employee-ptkp').value = 'TK0';
+      document.getElementById('employee-join-date').value = '11 Nov 2026';
+      document.getElementById('bank-name').value = 'BCA';
+      document.getElementById('bank-number').value = '12341234';
+      document.getElementById('bank-owner').value = 'Nama Pemilik Rekening';
+
+      removeLogo();
+
+      incomeList = [
+        { id: 1, name: 'Gaji Pokok', amount: 5000000 },
+        { id: 2, name: 'Tunjangan Operasional', amount: 1500000 },
+        { id: 3, name: 'Tunjangan Komunikasi', amount: 500000 }
+      ];
+
+      deductionList = [
+        { id: 1, name: 'BPJS Ketenagakerjaan', amount: 150000 },
+        { id: 2, name: 'BPJS Kesehatan', amount: 50000 },
+        { id: 3, name: 'PPh 21', amount: 125000 }
+      ];
+
+      setThemeColor('#E53F6A');
+      renderIncomeRows();
+      renderDeductionRows();
+    }
+
+    // --- DOWNLOAD AS PDF (CLIENT-SIDE) ---
+    async function handleDownloadPDF() {
+      const element = document.getElementById('slip-printable-area');
+      const employeeName = document.getElementById('employee-name').value.trim() || 'Karyawan';
+      const period = document.getElementById('period-text').value.trim() || 'Periode';
+      const cleanFileName = `Slip_Gaji_${employeeName.replace(/[^a-zA-Z0-9]/g, '_')}_${period.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+
+      // Show temporary loading indicator
+      const downloadBtns = [
+        document.getElementById('btn-top-download'),
+        document.getElementById('btn-mid-download'),
+        document.getElementById('btn-bottom-download')
+      ];
+
+      downloadBtns.forEach(btn => {
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = `<span class="inline-block animate-spin mr-2">⏳</span> Mengunduh PDF...`;
+        }
+      });
+
+      try {
+        const { jsPDF } = window.jspdf;
+        
+        // High quality canvas capture
+        const canvas = await html2canvas(element, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#FFFFFF',
+          windowWidth: element.scrollWidth
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 5, pdfWidth, pdfHeight);
+        pdf.save(cleanFileName);
+      } catch (err) {
+        console.error('PDF Generation failed, fallback to print:', err);
+        window.print();
+      } finally {
+        downloadBtns.forEach(btn => {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="download" class="w-4 h-4"></i><span>Download Slip Gaji</span>`;
+          }
+        });
+        lucide.createIcons();
+      }
+    }
+
+    // --- SHARE VIA WHATSAPP ---
+    function handleShareWhatsApp() {
+      const company = document.getElementById('company-name').value;
+      const employee = document.getElementById('employee-name').value;
+      const period = document.getElementById('period-text').value;
+      const totalIncome = document.getElementById('total-income-display').innerText;
+      const totalDeduction = document.getElementById('total-deduction-display').innerText;
+      const thp = document.getElementById('take-home-pay-display').innerText;
+      const terbilangText = document.getElementById('terbilang-display').innerText;
+
+      const message = `*SLIP GAJI KARYAWAN*\n` +
+        `--------------------------------\n` +
+        `Perusahaan: ${company}\n` +
+        `Periode: ${period}\n` +
+        `Nama Karyawan: ${employee}\n` +
+        `--------------------------------\n` +
+        `Total Pendapatan: ${totalIncome}\n` +
+        `Total Potongan: ${totalDeduction}\n` +
+        `*TAKE HOME PAY: ${thp}*\n` +
+        `(${terbilangText})\n` +
+        `--------------------------------\n` +
+        `Dibuat via Slip Superapp`;
+
+      const encoded = encodeURIComponent(message);
+      window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
+    }
+
+    // --- INIT ON LOAD ---
+    window.addEventListener('DOMContentLoaded', () => {
+      // Set current date in footer
+      const now = new Date();
+      const options = { day: 'numeric', month: 'short', year: 'numeric' };
+      document.getElementById('current-print-date').innerText = now.toLocaleDateString('id-ID', options);
+
+      initColorPalette();
+      renderIncomeRows();
+      renderDeductionRows();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
