@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Slip Superapp - Generator & Download Slip Gaji Praktis dan Gratis</title>
-  <meta name="description" content="Buat slip gaji karyawan dengan mudah dan download file PDF gratis dalam hitungan detik dengan Slip Superapp Generator." />
+  <title>Superapp HRIS &amp; Payroll — Dashboard &amp; Generator Slip Gaji (Bumi Makmur)</title>
+  <meta name="description" content="Sistem HRIS & Payroll Lengkap SuperApp untuk Bumi Makmur. 100% Gratis & Unlimited tanpa biaya langganan." />
   
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e53f6a'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/><polyline points='14 2 14 8 20 8'/><line x1='16' y1='13' x2='8' y2='13'/><line x1='16' y1='17' x2='8' y2='17'/><polyline points='10 9 9 9 8 9'/></svg>" />
@@ -21,10 +21,13 @@
 
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
             brand: 'var(--theme-color, #E53F6A)',
+            brandHover: 'var(--theme-color-hover, #c93056)',
+            sidebarBg: '#1E293B',
           }
         }
       }
@@ -139,341 +142,1092 @@
       transform: scale(1.18);
       box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--theme-color);
     }
+
+    /* Custom Scrollbar for Sleek Dashboard Feel */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F1F5F9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
   </style>
 </head>
-<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased">
 
-  <!-- TOP HEADER / HERO -->
-  <header class="max-w-6xl mx-auto text-center mb-8 no-print">
-    <div class="flex items-center justify-center gap-2 mb-3">
-      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-pink-100 text-[#E53F6A]">
-        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-        Superapp Payroll Tool
-      </span>
-      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
-        100% Gratis &amp; Tanpa Registrasi
-      </span>
+  <!-- TOP GLOBAL APP SHELL HEADER -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-2.5 flex items-center justify-between shadow-xs no-print">
+    <!-- Left: Logo & Company Selector -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg theme-bg flex items-center justify-center text-white font-black text-lg shadow-sm">
+          S
+        </div>
+        <div>
+          <span class="font-extrabold text-slate-900 tracking-tight text-base block leading-none">Superapp HRIS</span>
+          <span class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            Enterprise Free &bull; Unlimited
+          </span>
+        </div>
+      </div>
+
+      <!-- Entity Switcher -->
+      <div class="hidden sm:flex items-center gap-1.5 ml-4 pl-4 border-l border-slate-200">
+        <span class="text-xs text-slate-400 font-medium">Entitas:</span>
+        <div class="flex items-center gap-1 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-md text-xs font-bold text-slate-800 cursor-pointer transition-all">
+          <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-600"></i>
+          <span>Bumi Makmur</span>
+          <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
+        </div>
+      </div>
     </div>
 
-    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
-      Buat &amp; Download Slip Gaji dalam Satu Klik
-    </h1>
-    <p class="text-slate-600 max-w-2xl mx-auto text-sm sm:text-base mb-6">
-      Download dan nikmati kemudahan buat slip gaji karyawan Anda secara gratis, rapi, dan instan di sini.
-    </p>
-
-    <!-- Top Action Buttons -->
-    <div class="flex flex-wrap items-center justify-center gap-3">
-      <button onclick="handleDownloadPDF()" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-white font-semibold text-sm shadow-md hover:opacity-95 transition-all theme-bg" id="btn-top-download">
-        <i data-lucide="download" class="w-4 h-4"></i>
-        <span>Download Slip Gaji</span>
+    <!-- Center: Main Mode Switcher Pill -->
+    <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-semibold">
+      <button 
+        id="mode-btn-dashboard" 
+        onclick="switchAppMode('dashboard')" 
+        class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all theme-bg text-white shadow-xs"
+      >
+        <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+        <span>Dashboard HRIS</span>
       </button>
 
-      <button onclick="window.print()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-white border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-all shadow-sm">
-        <i data-lucide="printer" class="w-4 h-4"></i>
-        <span>Cetak Slip</span>
+      <button 
+        id="mode-btn-slip" 
+        onclick="switchAppMode('slip')" 
+        class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900"
+      >
+        <i data-lucide="receipt" class="w-3.5 h-3.5"></i>
+        <span>Generator Slip Gaji</span>
+      </button>
+    </div>
+
+    <!-- Right: Quick Actions, Audit Log, User -->
+    <div class="flex items-center gap-2">
+      <!-- Free Tier Advantage Badge -->
+      <div class="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+        <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-500"></i>
+        <span>Semua Fitur Pro &amp; Elite Terbuka Gratis</span>
+      </div>
+
+      <!-- Audit Trail Drawer Trigger -->
+      <button onclick="alert('Log Audit SuperApp: Semua mutasi data tersimpan aman secara lokal di perangkat Anda.')" class="p-2 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition-colors" title="Timeline Perubahan Data">
+        <i data-lucide="history" class="w-4 h-4"></i>
       </button>
 
-      <button onclick="handleShareWhatsApp()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 text-white font-semibold text-sm hover:bg-emerald-700 transition-all shadow-sm">
-        <i data-lucide="message-circle" class="w-4 h-4"></i>
-        <span>Kirim WhatsApp</span>
-      </button>
-
-      <button onclick="resetToDefaults()" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-slate-100 text-slate-600 font-medium text-sm hover:bg-slate-200 transition-all">
-        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-        <span>Reset</span>
-      </button>
+      <!-- User Profile -->
+      <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
+        <div class="w-7 h-7 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-xs">
+          BM
+        </div>
+        <div class="hidden xl:block text-left text-xs leading-tight">
+          <div class="font-bold text-slate-800">Bumi Makmur</div>
+          <div class="text-[10px] text-slate-400">bumimakmur002@gmail.com</div>
+        </div>
+      </div>
     </div>
   </header>
 
-  <!-- MAIN SLIP GAJI DOCUMENT (PRINTABLE & EDITABLE) -->
-  <main class="max-w-5xl mx-auto mb-8">
-    <div id="slip-printable-area" class="bg-white rounded-xl shadow-lg border border-slate-200 p-6 sm:p-10 transition-all">
+  <!-- ========================================================================= -->
+  <!-- 1. FULL HRIS & PAYROLL DASHBOARD (CLONED FROM GAJIHUB WITH ZERO PAYWALL) -->
+  <!-- ========================================================================= -->
+  <div id="view-dashboard-container" class="flex-1 flex overflow-hidden">
+    
+    <!-- LEFT SIDEBAR NAVIGATION -->
+    <aside id="app-sidebar" class="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 transition-all duration-200 border-r border-slate-800">
       
-      <!-- TOP BANNER: Pribadi & Rahasia -->
-      <div class="border border-slate-300 rounded px-4 py-2.5 text-center mb-6">
-        <div 
-          contenteditable="true" 
-          id="confidential-text" 
-          class="font-bold text-sm tracking-wide uppercase theme-text block text-center"
-          spellcheck="false"
-          title="Klik untuk mengubah label kerahasiaan"
-        >Pribadi &amp; Rahasia</div>
-      </div>
+      <!-- Nav Items -->
+      <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto text-xs font-medium">
+        
+        <!-- Dashboard -->
+        <button onclick="switchSidebarTab('overview')" class="sidebar-tab-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white font-semibold transition-all theme-bg" data-tab="overview">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i>
+          <span>Dashboard</span>
+        </button>
 
-      <!-- HEADER: Company Name & Logo -->
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-200 mb-6">
-        <div class="flex-1">
-          <div class="text-[11px] uppercase tracking-wider text-slate-400 font-bold mb-1 no-print">NAMA PERUSAHAAN</div>
-          <div 
-            contenteditable="true" 
-            id="company-name" 
-            class="text-2xl sm:text-3xl font-extrabold text-slate-900 block"
-            spellcheck="false"
-            title="Klik untuk mengubah nama perusahaan"
-          >Nama Perusahaan Anda</div>
+        <!-- Karyawan -->
+        <button onclick="switchSidebarTab('employees')" class="sidebar-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all" data-tab="employees">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Karyawan</span>
+          <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-bold" id="sidebar-count-emp">3</span>
+        </button>
+
+        <!-- Kehadiran / Presensi -->
+        <button onclick="switchSidebarTab('attendance')" class="sidebar-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all" data-tab="attendance">
+          <i data-lucide="calendar-check" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Kehadiran &amp; Shift</span>
+          <span class="text-[10px] bg-emerald-950 text-emerald-400 px-1.5 py-0.5 rounded font-bold">Live</span>
+        </button>
+
+        <!-- Payroll -->
+        <button onclick="switchSidebarTab('payroll')" class="sidebar-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all" data-tab="payroll">
+          <i data-lucide="wallet" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Payroll &amp; Slip Gaji</span>
+        </button>
+
+        <!-- Keuangan: Kasbon & Reimburse -->
+        <button onclick="switchSidebarTab('finance')" class="sidebar-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all" data-tab="finance">
+          <i data-lucide="banknote" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Kasbon &amp; Klaim</span>
+        </button>
+
+        <!-- Approval (Bebas Biaya Elite) -->
+        <button onclick="switchSidebarTab('approval')" class="sidebar-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all" data-tab="approval">
+          <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Persetujuan (Approval)</span>
+          <span class="text-[10px] bg-blue-900 text-blue-300 px-1.5 py-0.5 rounded font-bold">Free Elite</span>
+        </button>
+
+        <!-- Rekrutmen (ATS) -->
+        <button onclick="switchSidebarTab('recruitment')" class="sidebar-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all" data-tab="recruitment">
+          <i data-lucide="briefcase" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Rekrutmen &amp; Pelamar</span>
+        </button>
+
+        <!-- KPI Kinerja -->
+        <button onclick="switchSidebarTab('kpi')" class="sidebar-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all" data-tab="kpi">
+          <i data-lucide="target" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Evaluasi KPI</span>
+        </button>
+
+        <!-- Time Tracker -->
+        <button onclick="switchSidebarTab('time-tracker')" class="sidebar-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all" data-tab="time-tracker">
+          <i data-lucide="clock" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Time Tracker</span>
+        </button>
+
+        <!-- Laporan & Pajak -->
+        <button onclick="switchSidebarTab('reports')" class="sidebar-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all" data-tab="reports">
+          <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Laporan &amp; PPh 21 TER</span>
+        </button>
+
+        <!-- Pengaturan -->
+        <button onclick="switchSidebarTab('settings')" class="sidebar-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all" data-tab="settings">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Pengaturan</span>
+        </button>
+
+      </nav>
+
+      <!-- Sidebar Footer Note -->
+      <div class="p-3 bg-slate-950/60 border-t border-slate-800 text-[11px] text-slate-400">
+        <div class="flex items-center gap-1.5 text-amber-400 font-semibold mb-0.5">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>SuperApp Unlimited</span>
+        </div>
+        <div>Tidak ada batasan karyawan atau fitur berbayar.</div>
+      </div>
+    </aside>
+
+    <!-- MAIN DASHBOARD CONTENT AREA -->
+    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50">
+      
+      <!-- SUBTAB 1: OVERVIEW DASHBOARD -->
+      <div id="subtab-overview" class="subtab-pane space-y-6">
+        
+        <!-- Welcome Banner & Quick Action Bar -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Selamat Datang di Portal HR Bumi Makmur</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Ringkasan operasional karyawan, presensi harian, dan estimasi payroll berjalan.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <button onclick="openModalAddEmployee()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold text-white theme-bg hover:opacity-95 shadow-xs transition-all">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
+              <span>Tambah Karyawan</span>
+            </button>
+            <button onclick="switchSidebarTab('payroll')" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-900 text-white hover:bg-slate-800 shadow-xs transition-all">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              <span>Proses Payroll Bulan Ini</span>
+            </button>
+          </div>
         </div>
 
-        <!-- Logo Upload & Display -->
-        <div class="flex flex-col items-end">
-          <div id="logo-container" class="relative group cursor-pointer border-2 border-dashed border-slate-200 hover:border-slate-400 rounded-lg p-2 transition-all min-w-[140px] h-[72px] flex items-center justify-center bg-slate-50">
-            <img id="company-logo" src="" alt="Company Logo" class="max-h-14 max-w-[180px] object-contain hidden" />
-            <div id="logo-placeholder" class="text-center">
-              <i data-lucide="image-plus" class="w-5 h-5 mx-auto text-slate-400 group-hover:text-slate-600 mb-1"></i>
-              <span class="text-xs text-slate-500 font-medium group-hover:text-slate-700 block">Upload Logo</span>
+        <!-- 4 TOP KPI SUMMARY CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- Card 1: Total Karyawan -->
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-all">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider">Total Karyawan</span>
+              <div class="w-8 h-8 rounded-lg bg-pink-50 text-[#E53F6A] flex items-center justify-center">
+                <i data-lucide="users" class="w-4 h-4"></i>
+              </div>
             </div>
-            <input type="file" id="logo-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" title="Upload Logo Perusahaan" />
+            <div class="text-2xl font-black text-slate-900" id="kpi-total-emp">3</div>
+            <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5">
+              <span class="text-emerald-600 font-bold">3 Aktif</span> &bull; 0 Cuti &bull; Unlimited Kuota
+            </div>
           </div>
-          <button id="btn-remove-logo" onclick="removeLogo()" class="text-[11px] text-red-500 hover:text-red-700 mt-1 hidden no-print">
-            Hapus Logo
+
+          <!-- Card 2: Presensi Hari Ini -->
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-all">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider">Kehadiran Hari Ini</span>
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <i data-lucide="clock" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-slate-900">100%</div>
+            <div class="text-[11px] text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+              Semua karyawan hadir tepat waktu
+            </div>
+          </div>
+
+          <!-- Card 3: Beban Payroll Berjalan -->
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-all">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider">Payroll Bulan Ini</span>
+              <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                <i data-lucide="wallet" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-slate-900" id="kpi-payroll-total">Rp 18.500.000</div>
+            <div class="text-[11px] text-slate-500 mt-1">
+              Status: <span class="font-bold text-amber-600">Siap Bayar</span> (Cut-off 30 Nov)
+            </div>
+          </div>
+
+          <!-- Card 4: Kasbon & Klaim Tertunda -->
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-all">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider">Kasbon &amp; Klaim</span>
+              <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                <i data-lucide="banknote" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-slate-900">Rp 500.000</div>
+            <div class="text-[11px] text-slate-500 mt-1">
+              1 pinjaman aktif &bull; Potong gaji otomatis
+            </div>
+          </div>
+
+        </div>
+
+        <!-- DASHBOARD WIDGETS GRID (6 Modul Utama) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Widget 1: Quick Approval Inbox (Free Elite Feature) -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="clipboard-check" class="w-4 h-4 text-blue-600"></i>
+                  <h3 class="font-bold text-sm text-slate-900">Menunggu Persetujuan</h3>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Multi-Level Active</span>
+              </div>
+              <div class="space-y-2 text-xs">
+                <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-slate-800">Cuti Tahunan (1 Hari)</div>
+                    <div class="text-[11px] text-slate-500">Agus Supriyanto &bull; 15 Nov 2026</div>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <button onclick="alert('Disetujui!')" class="px-2 py-1 bg-emerald-600 text-white rounded font-bold hover:bg-emerald-700">Setujui</button>
+                    <button onclick="alert('Ditolak')" class="px-2 py-1 bg-slate-200 text-slate-700 rounded font-semibold hover:bg-slate-300">Tolak</button>
+                  </div>
+                </div>
+                <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-slate-800">Lembur Operasional (3 Jam)</div>
+                    <div class="text-[11px] text-slate-500">Budi Santoso &bull; SPKL Stok Opname</div>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <button onclick="alert('Disetujui!')" class="px-2 py-1 bg-emerald-600 text-white rounded font-bold hover:bg-emerald-700">Setujui</button>
+                    <button onclick="alert('Ditolak')" class="px-2 py-1 bg-slate-200 text-slate-700 rounded font-semibold hover:bg-slate-300">Tolak</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-2 border-t border-slate-100 text-right">
+              <button onclick="switchSidebarTab('approval')" class="text-xs font-bold theme-text hover:underline">Lihat Semua Pengajuan &rarr;</button>
+            </div>
+          </div>
+
+          <!-- Widget 2: Kalender Kerja & Libur SKB 3 Menteri -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="calendar" class="w-4 h-4 text-emerald-600"></i>
+                  <h3 class="font-bold text-sm text-slate-900">Hari Libur &amp; Agenda Bulan Ini</h3>
+                </div>
+                <span class="text-[10px] text-slate-400 font-medium">November 2026</span>
+              </div>
+              <ul class="space-y-2 text-xs">
+                <li class="flex items-start gap-2.5 p-2 rounded-lg bg-slate-50">
+                  <div class="w-7 h-7 rounded bg-red-100 text-red-600 font-bold flex items-center justify-center shrink-0 text-[11px]">10</div>
+                  <div>
+                    <div class="font-semibold text-slate-800">Hari Pahlawan Nasional</div>
+                    <div class="text-[11px] text-slate-500">Hari Libur Nasional Resmi</div>
+                  </div>
+                </li>
+                <li class="flex items-start gap-2.5 p-2 rounded-lg bg-slate-50">
+                  <div class="w-7 h-7 rounded bg-pink-100 text-[#E53F6A] font-bold flex items-center justify-center shrink-0 text-[11px]">25</div>
+                  <div>
+                    <div class="font-semibold text-slate-800">Jadwal Penggajian (Payday)</div>
+                    <div class="text-[11px] text-slate-500">Transfer otomatis rekening BCA &amp; Mandiri</div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="mt-4 pt-2 border-t border-slate-100 text-right">
+              <span class="text-[11px] text-slate-400">Sinkron dengan kalender cuti bersama</span>
+            </div>
+          </div>
+
+          <!-- Widget 3: Peringatan Kontrak Kerja (Prevent Expired Contracts) -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="alert-circle" class="w-4 h-4 text-amber-500"></i>
+                  <h3 class="font-bold text-sm text-slate-900">Masa Kontrak Berakhir</h3>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Aman</span>
+              </div>
+              <div class="p-4 rounded-lg bg-emerald-50/50 border border-emerald-100 text-xs text-center text-slate-600">
+                <i data-lucide="shield-check" class="w-8 h-8 text-emerald-500 mx-auto mb-1"></i>
+                <div class="font-bold text-slate-800">Tidak ada kontrak expired</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Semua karyawan kontrak PKWT masih memiliki masa berlaku &gt; 90 hari.</div>
+              </div>
+            </div>
+            <div class="mt-4 pt-2 border-t border-slate-100 text-right">
+              <button onclick="switchSidebarTab('employees')" class="text-xs font-bold theme-text hover:underline">Kelola Data Pegawai &rarr;</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- SUBTAB 2: KARYAWAN (MASTER EMPLOYEE DIRECTORY) -->
+      <div id="subtab-employees" class="subtab-pane hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Data Induk Karyawan</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Kelola informasi pribadi, kontak, jabatan, struktur payroll, dan akun ESS mobile karyawan.</p>
+          </div>
+          <button onclick="openModalAddEmployee()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white theme-bg hover:opacity-95 shadow-xs transition-all">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>+ Tambah Karyawan Baru</span>
           </button>
         </div>
-      </div>
 
-      <!-- METADATA GRID: Periode, Karyawan, Departemen, Status -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3 pb-6 border-b border-slate-200 text-sm mb-6">
-        
-        <!-- Kolom Kiri -->
-        <div class="space-y-2.5">
-          <div class="flex items-baseline">
-            <span class="w-36 text-slate-500 font-medium shrink-0">Slip Gaji Periode</span>
-            <span class="mr-2 text-slate-400 shrink-0">:</span>
-            <span contenteditable="true" id="period-text" class="font-semibold text-slate-800" spellcheck="false">01 Nov 2026 - 30 Nov 2026</span>
+        <!-- Employee Table -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50/60">
+            <div class="flex items-center gap-2 text-xs">
+              <input type="text" placeholder="Cari nama atau NIK..." class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs w-60 bg-white outline-none focus:border-brand" />
+              <select class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                <option value="">Semua Departemen</option>
+                <option value="Operasional">Operasional</option>
+                <option value="Kasir & Toko">Kasir &amp; Toko</option>
+                <option value="Manajemen">Manajemen</option>
+              </select>
+            </div>
+            <span class="text-xs text-slate-500 font-semibold">Total: <span id="emp-table-count">3</span> Karyawan</span>
           </div>
 
-          <div class="flex items-baseline">
-            <span class="w-36 text-slate-500 font-medium shrink-0">Nama</span>
-            <span class="mr-2 text-slate-400 shrink-0">:</span>
-            <span contenteditable="true" id="employee-name" class="font-semibold text-slate-800" spellcheck="false">Nama Karyawan</span>
-          </div>
-
-          <div class="flex items-baseline">
-            <span class="w-36 text-slate-500 font-medium shrink-0">ID Karyawan</span>
-            <span class="mr-2 text-slate-400 shrink-0">:</span>
-            <span contenteditable="true" id="employee-id" class="font-semibold text-slate-800" spellcheck="false">123456789</span>
-          </div>
-
-          <div class="flex items-baseline">
-            <span class="w-36 text-slate-500 font-medium shrink-0">Bagian</span>
-            <span class="mr-2 text-slate-400 shrink-0">:</span>
-            <span contenteditable="true" id="employee-department" class="font-semibold text-slate-800" spellcheck="false">CEO</span>
-          </div>
-
-          <div class="flex items-baseline">
-            <span class="w-36 text-slate-500 font-medium shrink-0">Job Title</span>
-            <span class="mr-2 text-slate-400 shrink-0">:</span>
-            <span contenteditable="true" id="employee-job-title" class="font-semibold text-slate-800" spellcheck="false">Commissioner</span>
-          </div>
-        </div>
-
-        <!-- Kolom Kanan -->
-        <div class="space-y-2.5">
-          <div class="flex items-baseline">
-            <span class="w-40 text-slate-500 font-medium shrink-0">Golongan</span>
-            <span class="mr-2 text-slate-400 shrink-0">:</span>
-            <span contenteditable="true" id="employee-grade" class="font-semibold text-slate-800" spellcheck="false">BOD</span>
-          </div>
-
-          <div class="flex items-baseline">
-            <span class="w-40 text-slate-500 font-medium shrink-0">Status Karyawan</span>
-            <span class="mr-2 text-slate-400 shrink-0">:</span>
-            <span contenteditable="true" id="employee-status" class="font-semibold text-slate-800" spellcheck="false">Tetap</span>
-          </div>
-
-          <div class="flex items-baseline">
-            <span class="w-40 text-slate-500 font-medium shrink-0">Status PTKP</span>
-            <span class="mr-2 text-slate-400 shrink-0">:</span>
-            <span contenteditable="true" id="employee-ptkp" class="font-semibold text-slate-800" spellcheck="false">TK0</span>
-          </div>
-
-          <div class="flex items-baseline">
-            <span class="w-40 text-slate-500 font-medium shrink-0">Tanggal Bergabung</span>
-            <span class="mr-2 text-slate-400 shrink-0">:</span>
-            <span contenteditable="true" id="employee-join-date" class="font-semibold text-slate-800" spellcheck="false">11 Nov 2026</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- TABLES: Pendapatan (Kiri) & Potongan (Kanan) -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        
-        <!-- TABEL PENDAPATAN -->
-        <div class="flex flex-col">
-          <div class="w-full">
-            <table class="w-full border-collapse border border-slate-900 text-sm bg-white shadow-sm">
-              <thead>
-                <tr class="theme-bg text-white">
-                  <th class="border-r border-slate-900 px-3 py-2 text-left font-semibold w-1/2">Komponen Pendapatan</th>
-                  <th class="px-3 py-2 text-right font-semibold w-1/2">Jumlah</th>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="px-4 py-3">Nama &amp; ID Karyawan</th>
+                  <th class="px-4 py-3">Jabatan &amp; Dept</th>
+                  <th class="px-4 py-3">Status</th>
+                  <th class="px-4 py-3">Gaji Pokok</th>
+                  <th class="px-4 py-3">Bank Transfer</th>
+                  <th class="px-4 py-3 text-right">Aksi</th>
                 </tr>
               </thead>
-              <tbody id="income-table-body">
+              <tbody id="employee-list-tbody" class="divide-y divide-slate-100">
                 <!-- Injected via JS -->
               </tbody>
-              <tfoot>
-                <tr class="font-bold border-t border-slate-900 bg-slate-50">
-                  <td class="border-r border-slate-900 px-3 py-2.5 text-slate-900">Total Pendapatan</td>
-                  <td class="px-3 py-2.5 text-right font-bold text-slate-900" id="total-income-display">Rp 0</td>
-                </tr>
-              </tfoot>
             </table>
           </div>
+        </div>
+      </div>
 
-          <!-- + Tambah Baris Button (Right-aligned under table) -->
-          <div class="flex justify-end mt-2 btn-tambah-baris-container no-print">
-            <button onclick="addIncomeRow()" class="theme-bg hover:opacity-95 text-white font-semibold text-xs px-4 py-2 rounded-md shadow-sm flex items-center gap-1.5 transition-all">
-              <span class="text-sm font-bold leading-none">+</span>
-              <span>Tambah Baris</span>
+      <!-- SUBTAB 3: KEHADIRAN / PRESENSI -->
+      <div id="subtab-attendance" class="subtab-pane hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Presensi &amp; Jadwal Kerja (Shift)</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Pemantauan jam masuk, jam pulang, radius GPS Geofencing, dan log foto kehadiran.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+              Geofence: Toko Bumi Makmur (Radius 100m)
+            </span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="p-4 border-b border-slate-200 flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-700">Log Presensi Hari Ini (11 Nov 2026)</span>
+            <button onclick="alert('Log presensi berhasil di-refresh.')" class="theme-text font-bold hover:underline">Refresh Data</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="px-4 py-3">Karyawan</th>
+                  <th class="px-4 py-3">Jadwal Shift</th>
+                  <th class="px-4 py-3">Jam Masuk</th>
+                  <th class="px-4 py-3">Jam Pulang</th>
+                  <th class="px-4 py-3">Lokasi GPS</th>
+                  <th class="px-4 py-3">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr>
+                  <td class="px-4 py-3 font-semibold text-slate-800">Budi Santoso</td>
+                  <td class="px-4 py-3">Shift Pagi (08:00 - 17:00)</td>
+                  <td class="px-4 py-3 font-mono text-emerald-600 font-bold">07:54</td>
+                  <td class="px-4 py-3 font-mono text-slate-400">-</td>
+                  <td class="px-4 py-3 text-slate-500">Toko Pusat (Akurat 8m)</td>
+                  <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Tepat Waktu</span></td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 font-semibold text-slate-800">Siti Rahmawati</td>
+                  <td class="px-4 py-3">Shift Pagi (08:00 - 17:00)</td>
+                  <td class="px-4 py-3 font-mono text-emerald-600 font-bold">07:58</td>
+                  <td class="px-4 py-3 font-mono text-slate-400">-</td>
+                  <td class="px-4 py-3 text-slate-500">Toko Pusat (Akurat 12m)</td>
+                  <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Tepat Waktu</span></td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 font-semibold text-slate-800">Agus Supriyanto</td>
+                  <td class="px-4 py-3">Shift Siang (13:00 - 21:00)</td>
+                  <td class="px-4 py-3 font-mono text-slate-400">-</td>
+                  <td class="px-4 py-3 font-mono text-slate-400">-</td>
+                  <td class="px-4 py-3 text-slate-500">-</td>
+                  <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600">Belum Mulai</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBTAB 4: PAYROLL & SLIP GAJI -->
+      <div id="subtab-payroll" class="subtab-pane hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Penggajian (Payroll Engine)</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Kalkulasi gaji pokok, lembur PP 35/2021, BPJS TK &amp; Kes, serta Pajak PPh 21 TER 2024.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="handleBatchGeneratePayroll()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white theme-bg hover:opacity-95 shadow-xs transition-all">
+              <i data-lucide="calculator" class="w-4 h-4"></i>
+              <span>Hitung Ulang Payroll Bulan Ini</span>
+            </button>
+            <button onclick="handleExportBankTransfer()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs transition-all">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Ekspor File Transfer Bank</span>
             </button>
           </div>
         </div>
 
-        <!-- TABEL POTONGAN -->
-        <div class="flex flex-col">
-          <div class="w-full">
-            <table class="w-full border-collapse border border-slate-900 text-sm bg-white shadow-sm">
-              <thead>
-                <tr class="theme-bg text-white">
-                  <th class="border-r border-slate-900 px-3 py-2 text-left font-semibold w-1/2">Komponen Potongan</th>
-                  <th class="px-3 py-2 text-right font-semibold w-1/2">Jumlah</th>
+        <!-- Payroll Summary Cards -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/70 text-xs font-bold">
+            <span class="text-slate-800">Daftar Payroll Periode: 01 Nov 2026 - 30 Nov 2026</span>
+            <span class="text-emerald-600">Status: Siap Ditransfer</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="px-4 py-3">Karyawan</th>
+                  <th class="px-4 py-3">Gaji Pokok</th>
+                  <th class="px-4 py-3">Tunjangan</th>
+                  <th class="px-4 py-3">Lembur</th>
+                  <th class="px-4 py-3">BPJS &amp; PPh 21</th>
+                  <th class="px-4 py-3">Take Home Pay</th>
+                  <th class="px-4 py-3 text-right">Slip Gaji</th>
                 </tr>
               </thead>
-              <tbody id="deduction-table-body">
+              <tbody id="payroll-table-tbody" class="divide-y divide-slate-100">
                 <!-- Injected via JS -->
               </tbody>
-              <tfoot>
-                <tr class="font-bold border-t border-slate-900 bg-slate-50">
-                  <td class="border-r border-slate-900 px-3 py-2.5 text-slate-900">Total Potongan</td>
-                  <td class="px-3 py-2.5 text-right font-bold text-red-600" id="total-deduction-display">Rp 0</td>
-                </tr>
-              </tfoot>
             </table>
           </div>
-
-          <!-- + Tambah Baris Button (Right-aligned under table) -->
-          <div class="flex justify-end mt-2 btn-tambah-baris-container no-print">
-            <button onclick="addDeductionRow()" class="theme-bg hover:opacity-95 text-white font-semibold text-xs px-4 py-2 rounded-md shadow-sm flex items-center gap-1.5 transition-all">
-              <span class="text-sm font-bold leading-none">+</span>
-              <span>Tambah Baris</span>
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- BOTTOM SECTION: Bank Info (Kiri) & Take Home Pay (Kanan) -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end pt-4 border-t border-slate-200">
-        
-        <!-- Info Rekening Bank -->
-        <div class="space-y-2 text-sm">
-          <div class="flex items-baseline">
-            <span class="w-44 text-slate-500 font-medium shrink-0">Nama Bank</span>
-            <span class="mr-2 text-slate-400 shrink-0">:</span>
-            <span contenteditable="true" id="bank-name" class="font-semibold text-slate-800" spellcheck="false">BCA</span>
-          </div>
-
-          <div class="flex items-baseline">
-            <span class="w-44 text-slate-500 font-medium shrink-0">Nomor Rekening</span>
-            <span class="mr-2 text-slate-400 shrink-0">:</span>
-            <span contenteditable="true" id="bank-number" class="font-semibold text-slate-800" spellcheck="false">12341234</span>
-          </div>
-
-          <div class="flex items-baseline">
-            <span class="w-44 text-slate-500 font-medium shrink-0">Nama Pemilik Rekening</span>
-            <span class="mr-2 text-slate-400 shrink-0">:</span>
-            <span contenteditable="true" id="bank-owner" class="font-semibold text-slate-800" spellcheck="false">Nama Pemilik Rekening</span>
-          </div>
-        </div>
-
-        <!-- Take Home Pay Card -->
-        <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 text-right">
-          <div class="text-xs uppercase tracking-wider font-bold text-slate-500 mb-1">
-            TAKE HOME PAY
-          </div>
-          <div id="take-home-pay-display" class="text-2xl sm:text-3xl font-black theme-text tracking-tight mb-1">
-            Rp 0
-          </div>
-          <div id="terbilang-display" class="text-xs italic text-slate-500 leading-relaxed">
-            Nol Rupiah
-          </div>
-        </div>
-
-      </div>
-
-      <!-- SLIP FOOTER NOTE / TANDA TANGAN -->
-      <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
-        <div>
-          * Slip gaji ini dibuat secara otomatis melalui Slip Superapp dan sah tanpa tanda tangan basah.
-        </div>
-        <div class="text-right">
-          Dicetak pada: <span id="current-print-date"></span>
         </div>
       </div>
 
-    </div>
-  </main>
+      <!-- SUBTAB 5: KEUANGAN (KASBON & REIMBURSE) -->
+      <div id="subtab-finance" class="subtab-pane hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Manajemen Kasbon &amp; Reimbursement</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Kelola pinjaman karyawan dengan cicilan auto-potong slip gaji dan klaim operasional.</p>
+          </div>
+          <button onclick="alert('Form kasbon baru dibuka')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white theme-bg hover:opacity-95 shadow-xs transition-all">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>+ Catat Kasbon / Klaim Baru</span>
+          </button>
+        </div>
 
-  <!-- CONTROLS & COLOR PICKER SECTION (NO PRINT) -->
-  <section class="max-w-5xl mx-auto space-y-6 no-print">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Kasbon Table -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+            <div class="p-3.5 bg-slate-100 border-b border-slate-200 font-bold text-xs text-slate-800">
+              Pinjaman &amp; Kasbon Aktif
+            </div>
+            <div class="p-4 space-y-3 text-xs">
+              <div class="p-3 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-slate-800">Agus Supriyanto</div>
+                  <div class="text-[11px] text-slate-500">Total Pinjaman: Rp 1.500.000 &bull; Sisa: Rp 500.000</div>
+                  <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">Cicilan bulan ini: Rp 500.000 (Lunas bulan ini)</div>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700">Aktif</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reimbursement Table -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+            <div class="p-3.5 bg-slate-100 border-b border-slate-200 font-bold text-xs text-slate-800">
+              Klaim Reimbursement Karyawan
+            </div>
+            <div class="p-4 space-y-3 text-xs">
+              <div class="p-3 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-slate-800">Budi Santoso &bull; Bensin &amp; Tol Logistik</div>
+                  <div class="text-[11px] text-slate-500">Nominal: Rp 175.000 &bull; Lampiran struk terverifikasi</div>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">Disetujui</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBTAB 6: APPROVAL (MULTI-LEVEL WORKFLOW) -->
+      <div id="subtab-approval" class="subtab-pane hidden space-y-6">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Approval Multi-Level Bebas Batas</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Fitur persetujuan bertingkat (Supervisor &rarr; Manager &rarr; HR/Owner) tanpa biaya langganan.</p>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Unlocked 100% Free</span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-6 text-center text-xs text-slate-500">
+          <i data-lucide="check-check" class="w-10 h-10 text-emerald-500 mx-auto mb-2"></i>
+          <div class="font-bold text-slate-800 text-sm">Semua pengajuan telah diproses</div>
+          <p class="mt-1">Tidak ada pengajuan cuti, lembur, atau kasbon yang tertunda saat ini.</p>
+        </div>
+      </div>
+
+      <!-- SUBTAB 7: REKRUTMEN (ATS KANBAN) -->
+      <div id="subtab-recruitment" class="subtab-pane hidden space-y-6">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Rekrutmen &amp; Pelamar (ATS)</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Kelola lowongan toko dan pipeline seleksi kandidat langsung ke status karyawan.</p>
+          </div>
+          <button onclick="alert('Form lowongan baru dibuka')" class="px-3.5 py-2 theme-bg text-white font-bold text-xs rounded-lg shadow-xs">+ Buka Lowongan Baru</button>
+        </div>
+
+        <!-- Kanban Columns -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+          <div class="bg-slate-100 p-3 rounded-xl border border-slate-200">
+            <div class="font-bold text-slate-700 mb-2 flex items-center justify-between">
+              <span>Berkas Masuk</span>
+              <span class="bg-white px-1.5 py-0.5 rounded text-[10px]">2</span>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-2xs mb-2">
+              <div class="font-bold text-slate-800">Dian Pramesti</div>
+              <div class="text-[11px] text-slate-500">Posisi: Pramuniaga Toko</div>
+            </div>
+          </div>
+          <div class="bg-slate-100 p-3 rounded-xl border border-slate-200">
+            <div class="font-bold text-slate-700 mb-2 flex items-center justify-between">
+              <span>Wawancara</span>
+              <span class="bg-white px-1.5 py-0.5 rounded text-[10px]">1</span>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-2xs mb-2">
+              <div class="font-bold text-slate-800">Rizky Firmansyah</div>
+              <div class="text-[11px] text-slate-500">Posisi: Driver Logistik</div>
+            </div>
+          </div>
+          <div class="bg-slate-100 p-3 rounded-xl border border-slate-200">
+            <div class="font-bold text-slate-700 mb-2 flex items-center justify-between">
+              <span>Offering</span>
+              <span class="bg-white px-1.5 py-0.5 rounded text-[10px]">0</span>
+            </div>
+          </div>
+          <div class="bg-slate-100 p-3 rounded-xl border border-slate-200">
+            <div class="font-bold text-emerald-800 mb-2 flex items-center justify-between">
+              <span>Diterima (Hired)</span>
+              <span class="bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded text-[10px]">1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBTAB 8: KPI & EVALUASI KINERJA -->
+      <div id="subtab-kpi" class="subtab-pane hidden space-y-6">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+          <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Evaluasi Kinerja &amp; KPI Karyawan</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Penetapan target penjualan, kedisiplinan kerja, dan evaluasi berkala per kuartal.</p>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-6 text-xs space-y-3">
+          <div class="p-3 rounded-lg border border-slate-200 flex items-center justify-between">
+            <div>
+              <div class="font-bold text-slate-800">Budi Santoso &bull; Kasir &amp; Toko</div>
+              <div class="text-[11px] text-slate-500">Target Ketepatan Stok: 98% &bull; Realisasi: 99.4%</div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold">Grade A (Sangat Baik)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBTAB 9: TIME TRACKER -->
+      <div id="subtab-time-tracker" class="subtab-pane hidden space-y-6">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+          <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Time Tracker &amp; Jam Proyek</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Pencatatan waktu kerja spesifik untuk penugasan luar kota atau proyek toko.</p>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-6 text-center text-xs text-slate-500">
+          <i data-lucide="timer" class="w-10 h-10 text-slate-400 mx-auto mb-2"></i>
+          <div>Tidak ada pelacakan proyek aktif hari ini.</div>
+        </div>
+      </div>
+
+      <!-- SUBTAB 10: LAPORAN & KEPATUHAN PAJAK -->
+      <div id="subtab-reports" class="subtab-pane hidden space-y-6">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+          <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Laporan Penggajian &amp; Pajak Pemerintah</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Ekspor rekapitulasi gaji bulanan, formulir PPh 21 TER, Coretax DJP, dan BPJS.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+            <i data-lucide="file-text" class="w-6 h-6 text-red-500 mb-2"></i>
+            <div class="font-bold text-slate-800 mb-1">Formulir 1721-A1 PPh 21</div>
+            <p class="text-slate-500 text-[11px] mb-3">Bukti potong pajak penghasilan karyawan tahunan.</p>
+            <button onclick="alert('Export 1721-A1 berhasil diunduh.')" class="w-full py-1.5 px-3 bg-slate-900 text-white rounded font-bold hover:bg-slate-800">Unduh PDF / CSV</button>
+          </div>
+
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+            <i data-lucide="database" class="w-6 h-6 text-blue-600 mb-2"></i>
+            <div class="font-bold text-slate-800 mb-1">Format Coretax DJP</div>
+            <p class="text-slate-500 text-[11px] mb-3">File impor skema e-Bupot 21/26 resmi DJP.</p>
+            <button onclick="alert('File Coretax XML/CSV siap diupload ke DJP.')" class="w-full py-1.5 px-3 bg-slate-900 text-white rounded font-bold hover:bg-slate-800">Unduh File Coretax</button>
+          </div>
+
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+            <i data-lucide="landmark" class="w-6 h-6 text-emerald-600 mb-2"></i>
+            <div class="font-bold text-slate-800 mb-1">File Transfer Bank Payroll</div>
+            <p class="text-slate-500 text-[11px] mb-3">BCA Payroll, Mandiri MCM, BRI Cash Management.</p>
+            <button onclick="handleExportBankTransfer()" class="w-full py-1.5 px-3 bg-emerald-600 text-white rounded font-bold hover:bg-emerald-700">Ekspor File Bank</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBTAB 11: PENGATURAN SISTEM -->
+      <div id="subtab-settings" class="subtab-pane hidden space-y-6">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+          <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Pengaturan Perusahaan &amp; Hak Akses</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Konfigurasi entitas Bumi Makmur, cabang toko, akun bank, dan integrasi.</p>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-6 space-y-4 text-xs">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Nama Perusahaan</label>
+              <input type="text" value="Bumi Makmur" class="w-full p-2 border border-slate-300 rounded font-semibold text-slate-800 bg-slate-50" readonly />
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Email Administrator</label>
+              <input type="text" value="bumimakmur002@gmail.com" class="w-full p-2 border border-slate-300 rounded text-slate-800 bg-slate-50" readonly />
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Metode Pajak PPh 21 Default</label>
+              <select class="w-full p-2 border border-slate-300 rounded font-semibold text-slate-800 bg-white">
+                <option selected>Gross (Pajak ditanggung karyawan)</option>
+                <option>Gross-Up (Tunjangan pajak)</option>
+                <option>Nett (Pajak ditanggung perusahaan)</option>
+              </select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Status Lisensi SuperApp</label>
+              <div class="p-2 border border-emerald-200 rounded font-bold text-emerald-700 bg-emerald-50">
+                &check; Enterprise Unlimited (Free Forever)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. HIGH-PRECISION SALARY SLIP GENERATOR (INTEGRATED & FULLY COMPATIBLE) -->
+  <!-- ========================================================================= -->
+  <div id="view-slip-container" class="flex-1 py-8 px-4 sm:px-6 lg:px-8 hidden">
     
-    <!-- Middle Download Button -->
-    <div class="text-center">
-      <button onclick="handleDownloadPDF()" class="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full text-white font-bold text-base shadow-lg hover:shadow-xl transition-all theme-bg hover:opacity-95" id="btn-mid-download">
-        <i data-lucide="download" class="w-5 h-5"></i>
-        <span>Download Slip Gaji</span>
-      </button>
+    <!-- Top Action Banner -->
+    <div class="max-w-5xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-xs no-print">
+      <div class="flex items-center gap-2">
+        <button onclick="switchAppMode('dashboard')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span>Kembali ke Dashboard HRIS</span>
+        </button>
+        <span class="text-xs text-slate-400 font-medium">|</span>
+        <span class="text-xs font-bold text-slate-700">Mode Generator Slip Gaji Aktif</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="handleDownloadPDF()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white theme-bg hover:opacity-95 shadow-xs transition-all">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span>Download Slip (PDF)</span>
+        </button>
+        <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-all shadow-2xs">
+          <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+          <span>Cetak</span>
+        </button>
+        <button onclick="handleShareWhatsApp()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-all shadow-2xs">
+          <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+          <span>WhatsApp</span>
+        </button>
+      </div>
     </div>
 
-    <!-- THEME COLOR PALETTE CARD -->
-    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md border border-slate-200 p-5">
+    <!-- MAIN SLIP GAJI DOCUMENT (PRINTABLE & EDITABLE) -->
+    <main class="max-w-5xl mx-auto mb-8">
+      <div id="slip-printable-area" class="bg-white rounded-xl shadow-lg border border-slate-200 p-6 sm:p-10 transition-all">
+        
+        <!-- TOP BANNER: Pribadi & Rahasia -->
+        <div class="border border-slate-300 rounded px-4 py-2.5 text-center mb-6">
+          <div 
+            contenteditable="true" 
+            id="confidential-text" 
+            class="font-bold text-sm tracking-wide uppercase theme-text block text-center"
+            spellcheck="false"
+            title="Klik untuk mengubah label kerahasiaan"
+          >Pribadi &amp; Rahasia</div>
+        </div>
+
+        <!-- HEADER: Company Name & Logo -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-200 mb-6">
+          <div class="flex-1">
+            <div class="text-[11px] uppercase tracking-wider text-slate-400 font-bold mb-1 no-print">NAMA PERUSAHAAN</div>
+            <div 
+              contenteditable="true" 
+              id="company-name" 
+              class="text-2xl sm:text-3xl font-extrabold text-slate-900 block"
+              spellcheck="false"
+              title="Klik untuk mengubah nama perusahaan"
+            >Bumi Makmur</div>
+          </div>
+
+          <!-- Logo Upload & Display -->
+          <div class="flex flex-col items-end">
+            <div id="logo-container" class="relative group cursor-pointer border-2 border-dashed border-slate-200 hover:border-slate-400 rounded-lg p-2 transition-all min-w-[140px] h-[72px] flex items-center justify-center bg-slate-50">
+              <img id="company-logo" src="" alt="Company Logo" class="max-h-14 max-w-[180px] object-contain hidden" />
+              <div id="logo-placeholder" class="text-center">
+                <i data-lucide="image-plus" class="w-5 h-5 mx-auto text-slate-400 group-hover:text-slate-600 mb-1"></i>
+                <span class="text-xs text-slate-500 font-medium group-hover:text-slate-700 block">Upload Logo</span>
+              </div>
+              <input type="file" id="logo-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" title="Upload Logo Perusahaan" />
+            </div>
+            <button id="btn-remove-logo" onclick="removeLogo()" class="text-[11px] text-red-500 hover:text-red-700 mt-1 hidden no-print">
+              Hapus Logo
+            </button>
+          </div>
+        </div>
+
+        <!-- METADATA GRID: Periode, Karyawan, Departemen, Status -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3 pb-6 border-b border-slate-200 text-sm mb-6">
+          
+          <!-- Kolom Kiri -->
+          <div class="space-y-2.5">
+            <div class="flex items-baseline">
+              <span class="w-36 text-slate-500 font-medium shrink-0">Slip Gaji Periode</span>
+              <span class="mr-2 text-slate-400 shrink-0">:</span>
+              <span contenteditable="true" id="period-text" class="font-semibold text-slate-800" spellcheck="false">01 Nov 2026 - 30 Nov 2026</span>
+            </div>
+
+            <div class="flex items-baseline">
+              <span class="w-36 text-slate-500 font-medium shrink-0">Nama</span>
+              <span class="mr-2 text-slate-400 shrink-0">:</span>
+              <span contenteditable="true" id="employee-name" class="font-semibold text-slate-800" spellcheck="false">Budi Santoso</span>
+            </div>
+
+            <div class="flex items-baseline">
+              <span class="w-36 text-slate-500 font-medium shrink-0">ID Karyawan</span>
+              <span class="mr-2 text-slate-400 shrink-0">:</span>
+              <span contenteditable="true" id="employee-id" class="font-semibold text-slate-800" spellcheck="false">BM-001</span>
+            </div>
+
+            <div class="flex items-baseline">
+              <span class="w-36 text-slate-500 font-medium shrink-0">Bagian</span>
+              <span class="mr-2 text-slate-400 shrink-0">:</span>
+              <span contenteditable="true" id="employee-department" class="font-semibold text-slate-800" spellcheck="false">Kasir &amp; Toko</span>
+            </div>
+
+            <div class="flex items-baseline">
+              <span class="w-36 text-slate-500 font-medium shrink-0">Job Title</span>
+              <span class="mr-2 text-slate-400 shrink-0">:</span>
+              <span contenteditable="true" id="employee-job-title" class="font-semibold text-slate-800" spellcheck="false">Kepala Kasir</span>
+            </div>
+          </div>
+
+          <!-- Kolom Kanan -->
+          <div class="space-y-2.5">
+            <div class="flex items-baseline">
+              <span class="w-40 text-slate-500 font-medium shrink-0">Golongan</span>
+              <span class="mr-2 text-slate-400 shrink-0">:</span>
+              <span contenteditable="true" id="employee-grade" class="font-semibold text-slate-800" spellcheck="false">Staff Utama</span>
+            </div>
+
+            <div class="flex items-baseline">
+              <span class="w-40 text-slate-500 font-medium shrink-0">Status Karyawan</span>
+              <span class="mr-2 text-slate-400 shrink-0">:</span>
+              <span contenteditable="true" id="employee-status" class="font-semibold text-slate-800" spellcheck="false">Tetap</span>
+            </div>
+
+            <div class="flex items-baseline">
+              <span class="w-40 text-slate-500 font-medium shrink-0">Status PTKP</span>
+              <span class="mr-2 text-slate-400 shrink-0">:</span>
+              <span contenteditable="true" id="employee-ptkp" class="font-semibold text-slate-800" spellcheck="false">TK0</span>
+            </div>
+
+            <div class="flex items-baseline">
+              <span class="w-40 text-slate-500 font-medium shrink-0">Tanggal Bergabung</span>
+              <span class="mr-2 text-slate-400 shrink-0">:</span>
+              <span contenteditable="true" id="employee-join-date" class="font-semibold text-slate-800" spellcheck="false">01 Jan 2024</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABLES: Pendapatan (Kiri) & Potongan (Kanan) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          
+          <!-- TABEL PENDAPATAN -->
+          <div class="flex flex-col">
+            <div class="w-full">
+              <table class="w-full border-collapse border border-slate-900 text-sm bg-white shadow-sm">
+                <thead>
+                  <tr class="theme-bg text-white">
+                    <th class="border-r border-slate-900 px-3 py-2 text-left font-semibold w-1/2">Komponen Pendapatan</th>
+                    <th class="px-3 py-2 text-right font-semibold w-1/2">Jumlah</th>
+                  </tr>
+                </thead>
+                <tbody id="income-table-body">
+                  <!-- Injected via JS -->
+                </tbody>
+                <tfoot>
+                  <tr class="font-bold border-t border-slate-900 bg-slate-50">
+                    <td class="border-r border-slate-900 px-3 py-2.5 text-slate-900">Total Pendapatan</td>
+                    <td class="px-3 py-2.5 text-right font-bold text-slate-900" id="total-income-display">Rp 0</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <!-- + Tambah Baris Button (Right-aligned under table) -->
+            <div class="flex justify-end mt-2 btn-tambah-baris-container no-print">
+              <button onclick="addIncomeRow()" class="theme-bg hover:opacity-95 text-white font-semibold text-xs px-4 py-2 rounded-md shadow-sm flex items-center gap-1.5 transition-all">
+                <span class="text-sm font-bold leading-none">+</span>
+                <span>Tambah Baris</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- TABEL POTONGAN -->
+          <div class="flex flex-col">
+            <div class="w-full">
+              <table class="w-full border-collapse border border-slate-900 text-sm bg-white shadow-sm">
+                <thead>
+                  <tr class="theme-bg text-white">
+                    <th class="border-r border-slate-900 px-3 py-2 text-left font-semibold w-1/2">Komponen Potongan</th>
+                    <th class="px-3 py-2 text-right font-semibold w-1/2">Jumlah</th>
+                  </tr>
+                </thead>
+                <tbody id="deduction-table-body">
+                  <!-- Injected via JS -->
+                </tbody>
+                <tfoot>
+                  <tr class="font-bold border-t border-slate-900 bg-slate-50">
+                    <td class="border-r border-slate-900 px-3 py-2.5 text-slate-900">Total Potongan</td>
+                    <td class="px-3 py-2.5 text-right font-bold text-red-600" id="total-deduction-display">Rp 0</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <!-- + Tambah Baris Button (Right-aligned under table) -->
+            <div class="flex justify-end mt-2 btn-tambah-baris-container no-print">
+              <button onclick="addDeductionRow()" class="theme-bg hover:opacity-95 text-white font-semibold text-xs px-4 py-2 rounded-md shadow-sm flex items-center gap-1.5 transition-all">
+                <span class="text-sm font-bold leading-none">+</span>
+                <span>Tambah Baris</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- BOTTOM SECTION: Bank Info (Kiri) & Take Home Pay (Kanan) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end pt-4 border-t border-slate-200">
+          
+          <!-- Info Rekening Bank -->
+          <div class="space-y-2 text-sm">
+            <div class="flex items-baseline">
+              <span class="w-44 text-slate-500 font-medium shrink-0">Nama Bank</span>
+              <span class="mr-2 text-slate-400 shrink-0">:</span>
+              <span contenteditable="true" id="bank-name" class="font-semibold text-slate-800" spellcheck="false">BCA</span>
+            </div>
+
+            <div class="flex items-baseline">
+              <span class="w-44 text-slate-500 font-medium shrink-0">Nomor Rekening</span>
+              <span class="mr-2 text-slate-400 shrink-0">:</span>
+              <span contenteditable="true" id="bank-number" class="font-semibold text-slate-800" spellcheck="false">8820192831</span>
+            </div>
+
+            <div class="flex items-baseline">
+              <span class="w-44 text-slate-500 font-medium shrink-0">Nama Pemilik Rekening</span>
+              <span class="mr-2 text-slate-400 shrink-0">:</span>
+              <span contenteditable="true" id="bank-owner" class="font-semibold text-slate-800" spellcheck="false">Budi Santoso</span>
+            </div>
+          </div>
+
+          <!-- Take Home Pay Card -->
+          <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 text-right">
+            <div class="text-xs uppercase tracking-wider font-bold text-slate-500 mb-1">
+              TAKE HOME PAY
+            </div>
+            <div id="take-home-pay-display" class="text-2xl sm:text-3xl font-black theme-text tracking-tight mb-1">
+              Rp 0
+            </div>
+            <div id="terbilang-display" class="text-xs italic text-slate-500 leading-relaxed">
+              Nol Rupiah
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SLIP FOOTER NOTE / TANDA TANGAN -->
+        <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+          <div>
+            * Slip gaji ini dibuat secara otomatis melalui Superapp HRIS &amp; Payroll dan sah tanpa tanda tangan basah.
+          </div>
+          <div class="text-right">
+            Dicetak pada: <span id="current-print-date"></span>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- PALET WARNA TEMA -->
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md border border-slate-200 p-5 mb-8 no-print">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600">Pilih Warna Tema</h3>
         <span id="current-color-hex" class="text-xs font-mono font-bold text-slate-500">#E53F6A</span>
       </div>
 
-      <!-- Color Preview Box (Matches the large preview in Gajihub) -->
-      <div id="theme-preview-box" class="w-full h-14 rounded-lg flex items-center justify-center text-white font-bold text-sm tracking-wide shadow-inner mb-4 transition-all theme-bg">
+      <!-- Color Preview Box -->
+      <div id="theme-preview-box" class="w-full h-12 rounded-lg flex items-center justify-center text-white font-bold text-xs tracking-wide shadow-inner mb-3 transition-all theme-bg">
         <span id="theme-preview-text">#E53F6A</span>
       </div>
 
-      <!-- Swatches Grid (23 colors matching Gajihub + Custom) -->
-      <div id="color-swatches-grid" class="grid grid-cols-8 sm:grid-cols-12 gap-2">
+      <!-- Swatches Grid -->
+      <div id="color-swatches-grid" class="grid grid-cols-8 sm:grid-cols-12 gap-1.5">
         <!-- Injected via JavaScript -->
       </div>
+    </div>
 
-      <!-- Custom Color Picker Row -->
-      <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-        <span>Atau warna custom:</span>
-        <div class="flex items-center gap-2">
-          <input type="color" id="custom-color-picker" value="#E53F6A" class="w-7 h-7 rounded border-0 cursor-pointer p-0" onchange="setThemeColor(this.value)" />
-          <input type="text" id="custom-color-hex-input" value="#E53F6A" maxlength="7" class="w-20 px-2 py-1 text-xs border border-slate-300 rounded font-mono uppercase text-center" oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)) setThemeColor(this.value)" />
+  </div>
+
+  <!-- MODAL: TAMBAH KARYAWAN WIZARD (NO PRINT) -->
+  <div id="modal-add-employee" class="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 hidden no-print">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="font-extrabold text-slate-900 text-base">Tambah Karyawan Baru</h3>
+        <button onclick="closeModalAddEmployee()" class="text-slate-400 hover:text-slate-600">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Nama Lengkap</label>
+          <input type="text" id="new-emp-name" placeholder="Contoh: Ahmad Fauzi" class="w-full p-2 border border-slate-300 rounded font-medium outline-none focus:border-brand" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">ID / NIK Karyawan</label>
+            <input type="text" id="new-emp-id" placeholder="BM-004" class="w-full p-2 border border-slate-300 rounded font-medium outline-none focus:border-brand" />
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Jabatan</label>
+            <input type="text" id="new-emp-job" placeholder="Staff Gudang" class="w-full p-2 border border-slate-300 rounded font-medium outline-none focus:border-brand" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Departemen</label>
+            <select id="new-emp-dept" class="w-full p-2 border border-slate-300 rounded font-medium bg-white">
+              <option value="Operasional">Operasional</option>
+              <option value="Kasir & Toko">Kasir &amp; Toko</option>
+              <option value="Manajemen">Manajemen</option>
+              <option value="Logistik">Logistik</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Status Karyawan</label>
+            <select id="new-emp-status" class="w-full p-2 border border-slate-300 rounded font-medium bg-white">
+              <option value="Tetap">Tetap</option>
+              <option value="Kontrak">Kontrak</option>
+              <option value="Magang">Magang</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Gaji Pokok (Rp)</label>
+            <input type="text" id="new-emp-salary" value="4.500.000" class="w-full p-2 border border-slate-300 rounded font-semibold text-right outline-none focus:border-brand" oninput="this.value = parseInt(this.value.replace(/\D/g,'') || 0).toLocaleString('id-ID')" />
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Rekening Bank</label>
+            <input type="text" id="new-emp-bank" placeholder="BCA - 12345678" class="w-full p-2 border border-slate-300 rounded font-medium outline-none focus:border-brand" />
+          </div>
         </div>
       </div>
+
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2 text-xs">
+        <button onclick="closeModalAddEmployee()" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200">Batal</button>
+        <button onclick="saveNewEmployee()" class="px-4 py-2 rounded-lg theme-bg text-white font-bold hover:opacity-95">Simpan Karyawan</button>
+      </div>
     </div>
-
-    <!-- Bottom Download Button -->
-    <div class="text-center pt-2">
-      <button onclick="handleDownloadPDF()" class="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full text-white font-bold text-base shadow-lg hover:shadow-xl transition-all theme-bg hover:opacity-95" id="btn-bottom-download">
-        <i data-lucide="download" class="w-5 h-5"></i>
-        <span>Download Slip Gaji</span>
-      </button>
-    </div>
-
-    <!-- FOOTER -->
-    <footer class="pt-8 pb-4 text-center text-xs text-slate-400 border-t border-slate-200">
-      <p class="font-medium text-slate-600 mb-1">
-        Slip Superapp &bull; Bagian dari Ekosistem <a href="https://github.com/charisnasuperapp" target="_blank" class="hover:underline font-semibold theme-text">CHARISNA SuperApp</a>
-      </p>
-      <p>
-        Generator slip gaji aman, tidak menyimpan data ke server luar, 100% diproses di browser Anda.
-      </p>
-    </footer>
-
-  </section>
+  </div>
 
   <!-- JAVASCRIPT APPLICATION LOGIC -->
   <script>
-    // --- COLOR PALETTE (From Gajihub reverse engineering) ---
+    // --- 23 PALET WARNA TEMA (HASIL REVERSE ENGINEERING GAJIHUB) ---
     const THEME_PALETTE = [
       '#E53F6A', '#64748B', '#6B7280', '#71717A', 
       '#737373', '#78716C', '#EF4444', '#F97316', 
@@ -485,7 +1239,14 @@
 
     let currentThemeColor = '#E53F6A';
 
-    // --- INITIAL DATA MODEL ---
+    // --- STATE KARYAWAN BUMI MAKMUR ---
+    let employeesData = [
+      { id: 'BM-001', name: 'Budi Santoso', job: 'Kepala Kasir', dept: 'Kasir & Toko', status: 'Tetap', salary: 5000000, bank: 'BCA - 8820192831' },
+      { id: 'BM-002', name: 'Siti Rahmawati', job: 'Staff Keuangan & Admin', dept: 'Manajemen', status: 'Tetap', salary: 6000000, bank: 'Mandiri - 1370019283912' },
+      { id: 'BM-003', name: 'Agus Supriyanto', job: 'Koordinator Gudang & Stok', dept: 'Operasional', status: 'Kontrak', salary: 4500000, bank: 'BRI - 012938472918' }
+    ];
+
+    // --- DATA KOMPONEN SLIP GAJI AKTIF ---
     let incomeList = [
       { id: 1, name: 'Gaji Pokok', amount: 5000000 },
       { id: 2, name: 'Tunjangan Operasional', amount: 1500000 },
@@ -591,9 +1352,217 @@
       return hasil.replace(/\s+/g, ' ').trim();
     }
 
-    // --- RENDER TABLES (MATCHING GAJIHUB EXACT BORDER & TRASH OUTSIDE) ---
+    // --- APP MODE SWITCHER (DASHBOARD vs GENERATOR SLIP) ---
+    function switchAppMode(mode) {
+      const dashboardContainer = document.getElementById('view-dashboard-container');
+      const slipContainer = document.getElementById('view-slip-container');
+      const btnDashboard = document.getElementById('mode-btn-dashboard');
+      const btnSlip = document.getElementById('mode-btn-slip');
+
+      if (mode === 'dashboard') {
+        dashboardContainer.classList.remove('hidden');
+        slipContainer.classList.add('hidden');
+        btnDashboard.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all theme-bg text-white shadow-xs';
+        btnSlip.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900';
+      } else {
+        dashboardContainer.classList.add('hidden');
+        slipContainer.classList.remove('hidden');
+        btnSlip.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all theme-bg text-white shadow-xs';
+        btnDashboard.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900';
+      }
+      lucide.createIcons();
+    }
+
+    // --- SIDEBAR TAB SWITCHER ---
+    function switchSidebarTab(tabName) {
+      document.querySelectorAll('.sidebar-tab-btn').forEach(btn => {
+        if (btn.dataset.tab === tabName) {
+          btn.className = 'sidebar-tab-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white font-semibold transition-all theme-bg';
+        } else {
+          btn.className = 'sidebar-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all';
+        }
+      });
+
+      document.querySelectorAll('.subtab-pane').forEach(pane => pane.classList.add('hidden'));
+      const activePane = document.getElementById(`subtab-${tabName}`);
+      if (activePane) activePane.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // --- RENDER EMPLOYEE LIST IN DASHBOARD ---
+    function renderEmployeeDirectory() {
+      const tbody = document.getElementById('employee-list-tbody');
+      const countEl = document.getElementById('emp-table-count');
+      const sidebarCount = document.getElementById('sidebar-count-emp');
+      const kpiCount = document.getElementById('kpi-total-emp');
+
+      if (countEl) countEl.innerText = employeesData.length;
+      if (sidebarCount) sidebarCount.innerText = employeesData.length;
+      if (kpiCount) kpiCount.innerText = employeesData.length;
+
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      employeesData.forEach(emp => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition-colors';
+        tr.innerHTML = `
+          <td class="px-4 py-3">
+            <div class="font-bold text-slate-800">${emp.name}</div>
+            <div class="text-[11px] text-slate-400 font-mono">${emp.id}</div>
+          </td>
+          <td class="px-4 py-3">
+            <div class="font-semibold text-slate-700">${emp.job}</div>
+            <div class="text-[11px] text-slate-500">${emp.dept}</div>
+          </td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${emp.status === 'Tetap' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+              ${emp.status}
+            </span>
+          </td>
+          <td class="px-4 py-3 font-semibold text-slate-800">${formatCurrency(emp.salary)}</td>
+          <td class="px-4 py-3 text-slate-600">${emp.bank}</td>
+          <td class="px-4 py-3 text-right">
+            <button onclick="loadEmployeeToPayslip('${emp.id}')" class="px-2.5 py-1 theme-bg text-white font-bold rounded text-[11px] hover:opacity-90 shadow-2xs">
+              Buat Slip Gaji
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      renderPayrollTable();
+    }
+
+    // --- RENDER PAYROLL TABLE ---
+    function renderPayrollTable() {
+      const tbody = document.getElementById('payroll-table-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let totalGross = 0;
+
+      employeesData.forEach(emp => {
+        const allowance = 1500000;
+        const overtime = 350000;
+        const bpjsTax = 325000;
+        const thp = emp.salary + allowance + overtime - bpjsTax;
+        totalGross += thp;
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition-colors';
+        tr.innerHTML = `
+          <td class="px-4 py-3">
+            <div class="font-bold text-slate-800">${emp.name}</div>
+            <div class="text-[11px] text-slate-500">${emp.job} &bull; ${emp.id}</div>
+          </td>
+          <td class="px-4 py-3 font-semibold text-slate-800">${formatCurrency(emp.salary)}</td>
+          <td class="px-4 py-3 text-slate-700">${formatCurrency(allowance)}</td>
+          <td class="px-4 py-3 text-emerald-600 font-semibold">${formatCurrency(overtime)}</td>
+          <td class="px-4 py-3 text-red-600 font-semibold">-${formatCurrency(bpjsTax)}</td>
+          <td class="px-4 py-3 font-bold text-slate-900">${formatCurrency(thp)}</td>
+          <td class="px-4 py-3 text-right">
+            <button onclick="loadEmployeeToPayslip('${emp.id}')" class="px-2.5 py-1 bg-slate-900 text-white font-bold rounded text-[11px] hover:bg-slate-800">
+              Lihat Slip
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const kpiTotal = document.getElementById('kpi-payroll-total');
+      if (kpiTotal) kpiTotal.innerText = formatCurrency(totalGross);
+    }
+
+    // --- LOAD EMPLOYEE DATA TO SLIP GENERATOR ---
+    function loadEmployeeToPayslip(empId) {
+      const emp = employeesData.find(e => e.id === empId);
+      if (!emp) return;
+
+      document.getElementById('company-name').innerText = 'Bumi Makmur';
+      document.getElementById('employee-name').innerText = emp.name;
+      document.getElementById('employee-id').innerText = emp.id;
+      document.getElementById('employee-job-title').innerText = emp.job;
+      document.getElementById('employee-department').innerText = emp.dept;
+      document.getElementById('employee-status').innerText = emp.status;
+
+      // Update Bank Info
+      const bankParts = emp.bank.split(' - ');
+      document.getElementById('bank-name').innerText = bankParts[0] || 'BCA';
+      document.getElementById('bank-number').innerText = bankParts[1] || '12345678';
+      document.getElementById('bank-owner').innerText = emp.name;
+
+      // Update Salary Component
+      incomeList = [
+        { id: 1, name: 'Gaji Pokok', amount: emp.salary },
+        { id: 2, name: 'Tunjangan Operasional', amount: 1500000 },
+        { id: 3, name: 'Tunjangan Komunikasi', amount: 500000 }
+      ];
+
+      renderIncomeRows();
+      renderDeductionRows();
+      switchAppMode('slip');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- TAMBAH KARYAWAN MODAL ---
+    function openModalAddEmployee() {
+      document.getElementById('modal-add-employee').classList.remove('hidden');
+    }
+
+    function closeModalAddEmployee() {
+      document.getElementById('modal-add-employee').classList.add('hidden');
+    }
+
+    function saveNewEmployee() {
+      const name = document.getElementById('new-emp-name').value.trim();
+      const id = document.getElementById('new-emp-id').value.trim() || `BM-00${employeesData.length + 1}`;
+      const job = document.getElementById('new-emp-job').value.trim() || 'Staff';
+      const dept = document.getElementById('new-emp-dept').value;
+      const status = document.getElementById('new-emp-status').value;
+      const salary = cleanNumber(document.getElementById('new-emp-salary').value) || 4500000;
+      const bank = document.getElementById('new-emp-bank').value.trim() || 'BCA - 12345678';
+
+      if (!name) {
+        alert('Silakan masukkan nama lengkap karyawan');
+        return;
+      }
+
+      employeesData.push({ id, name, job, dept, status, salary, bank });
+      renderEmployeeDirectory();
+      closeModalAddEmployee();
+      alert(`Karyawan ${name} berhasil ditambahkan!`);
+    }
+
+    // --- BATCH RUN PAYROLL ---
+    function handleBatchGeneratePayroll() {
+      renderPayrollTable();
+      alert('Kalkulasi payroll berhasil diperbarui untuk seluruh karyawan Bumi Makmur!');
+    }
+
+    // --- EKSPOR FILE TRANSFER BANK ---
+    function handleExportBankTransfer() {
+      let csv = 'No,Nama Karyawan,Bank,Nomor Rekening,Nominal Transfer,Keterangan\n';
+      employeesData.forEach((emp, i) => {
+        const bankParts = emp.bank.split(' - ');
+        const totalPay = emp.salary + 1500000 + 350000 - 325000;
+        csv += `${i + 1},"${emp.name}","${bankParts[0]}","${bankParts[1]}",${totalPay},"Payroll Nov 2026 Bumi Makmur"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `Bank_Payroll_Bumi_Makmur_Nov_2026.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // --- RENDER TABLES (SLIP GENERATOR) ---
     function renderIncomeRows() {
       const container = document.getElementById('income-table-body');
+      if (!container) return;
       container.innerHTML = '';
 
       incomeList.forEach((item) => {
@@ -618,7 +1587,6 @@
                 class="currency-input w-28 sm:w-36 text-right font-semibold text-slate-900 border border-slate-300 rounded px-2 py-1 bg-slate-50/70 text-sm"
                 oninput="handleCurrencyInput(this, ${item.id}, 'income')"
               />
-              <!-- Delete Trash Icon Outside Table -->
               <button 
                 type="button" 
                 onclick="removeIncomeRow(${item.id})" 
@@ -639,6 +1607,7 @@
 
     function renderDeductionRows() {
       const container = document.getElementById('deduction-table-body');
+      if (!container) return;
       container.innerHTML = '';
 
       deductionList.forEach((item) => {
@@ -663,7 +1632,6 @@
                 class="currency-input w-28 sm:w-36 text-right font-semibold text-slate-900 border border-slate-300 rounded px-2 py-1 bg-slate-50/70 text-sm"
                 oninput="handleCurrencyInput(this, ${item.id}, 'deduction')"
               />
-              <!-- Delete Trash Icon Outside Table -->
               <button 
                 type="button" 
                 onclick="removeDeductionRow(${item.id})" 
@@ -739,15 +1707,21 @@
       const totalDeduction = deductionList.reduce((sum, item) => sum + (item.amount || 0), 0);
       const takeHomePay = Math.max(0, totalIncome - totalDeduction);
 
-      document.getElementById('total-income-display').innerText = formatCurrency(totalIncome);
-      document.getElementById('total-deduction-display').innerText = formatCurrency(totalDeduction);
-      document.getElementById('take-home-pay-display').innerText = formatCurrency(takeHomePay);
+      const elIncome = document.getElementById('total-income-display');
+      const elDeduction = document.getElementById('total-deduction-display');
+      const elThp = document.getElementById('take-home-pay-display');
+      const elTerbilang = document.getElementById('terbilang-display');
 
-      // Terbilang
-      if (takeHomePay === 0) {
-        document.getElementById('terbilang-display').innerText = 'Nol Rupiah';
-      } else {
-        document.getElementById('terbilang-display').innerText = terbilang(takeHomePay) + ' Rupiah';
+      if (elIncome) elIncome.innerText = formatCurrency(totalIncome);
+      if (elDeduction) elDeduction.innerText = formatCurrency(totalDeduction);
+      if (elThp) elThp.innerText = formatCurrency(takeHomePay);
+
+      if (elTerbilang) {
+        if (takeHomePay === 0) {
+          elTerbilang.innerText = 'Nol Rupiah';
+        } else {
+          elTerbilang.innerText = terbilang(takeHomePay) + ' Rupiah';
+        }
       }
     }
 
@@ -756,13 +1730,14 @@
       currentThemeColor = hex;
       document.documentElement.style.setProperty('--theme-color', hex);
       
-      document.getElementById('current-color-hex').innerText = hex.toUpperCase();
-      document.getElementById('theme-preview-box').style.backgroundColor = hex;
-      document.getElementById('theme-preview-text').innerText = hex.toUpperCase();
-      document.getElementById('custom-color-picker').value = hex;
-      document.getElementById('custom-color-hex-input').value = hex.toUpperCase();
+      const elHex = document.getElementById('current-color-hex');
+      const elBox = document.getElementById('theme-preview-box');
+      const elText = document.getElementById('theme-preview-text');
 
-      // Update swatch active status
+      if (elHex) elHex.innerText = hex.toUpperCase();
+      if (elBox) elBox.style.backgroundColor = hex;
+      if (elText) elText.innerText = hex.toUpperCase();
+
       document.querySelectorAll('.color-swatch').forEach(swatch => {
         if (swatch.dataset.color.toLowerCase() === hex.toLowerCase()) {
           swatch.classList.add('active');
@@ -774,12 +1749,13 @@
 
     function initColorPalette() {
       const container = document.getElementById('color-swatches-grid');
+      if (!container) return;
       container.innerHTML = '';
 
       THEME_PALETTE.forEach(color => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = `color-swatch w-7 h-7 rounded-md cursor-pointer transition-transform ${color.toLowerCase() === currentThemeColor.toLowerCase() ? 'active' : ''}`;
+        btn.className = `color-swatch w-6 h-6 rounded-md cursor-pointer transition-transform ${color.toLowerCase() === currentThemeColor.toLowerCase() ? 'active' : ''}`;
         btn.style.backgroundColor = color;
         btn.dataset.color = color;
         btn.title = color;
@@ -789,24 +1765,27 @@
     }
 
     // --- LOGO UPLOAD & REMOVE ---
-    document.getElementById('logo-input').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        if (file.size > 2 * 1024 * 1024) {
-          alert('Ukuran file maksimal 2 MB');
-          return;
+    const logoInput = document.getElementById('logo-input');
+    if (logoInput) {
+      logoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          if (file.size > 2 * 1024 * 1024) {
+            alert('Ukuran file maksimal 2 MB');
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = function(evt) {
+            const img = document.getElementById('company-logo');
+            img.src = evt.target.result;
+            img.classList.remove('hidden');
+            document.getElementById('logo-placeholder').classList.add('hidden');
+            document.getElementById('btn-remove-logo').classList.remove('hidden');
+          };
+          reader.readAsDataURL(file);
         }
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const img = document.getElementById('company-logo');
-          img.src = evt.target.result;
-          img.classList.remove('hidden');
-          document.getElementById('logo-placeholder').classList.add('hidden');
-          document.getElementById('btn-remove-logo').classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
-      }
-    });
+      });
+    }
 
     function removeLogo() {
       const img = document.getElementById('company-logo');
@@ -817,44 +1796,6 @@
       document.getElementById('logo-input').value = '';
     }
 
-    // --- RESET FUNCTION ---
-    function resetToDefaults() {
-      if (!confirm('Kembalikan template ke pengaturan awal?')) return;
-
-      document.getElementById('confidential-text').innerText = 'Pribadi & Rahasia';
-      document.getElementById('company-name').innerText = 'Nama Perusahaan Anda';
-      document.getElementById('period-text').innerText = '01 Nov 2026 - 30 Nov 2026';
-      document.getElementById('employee-name').innerText = 'Nama Karyawan';
-      document.getElementById('employee-id').innerText = '123456789';
-      document.getElementById('employee-department').innerText = 'CEO';
-      document.getElementById('employee-job-title').innerText = 'Commissioner';
-      document.getElementById('employee-grade').innerText = 'BOD';
-      document.getElementById('employee-status').innerText = 'Tetap';
-      document.getElementById('employee-ptkp').innerText = 'TK0';
-      document.getElementById('employee-join-date').innerText = '11 Nov 2026';
-      document.getElementById('bank-name').innerText = 'BCA';
-      document.getElementById('bank-number').innerText = '12341234';
-      document.getElementById('bank-owner').innerText = 'Nama Pemilik Rekening';
-
-      removeLogo();
-
-      incomeList = [
-        { id: 1, name: 'Gaji Pokok', amount: 5000000 },
-        { id: 2, name: 'Tunjangan Operasional', amount: 1500000 },
-        { id: 3, name: 'Tunjangan Komunikasi', amount: 500000 }
-      ];
-
-      deductionList = [
-        { id: 1, name: 'BPJS Ketenagakerjaan', amount: 150000 },
-        { id: 2, name: 'BPJS Kesehatan', amount: 50000 },
-        { id: 3, name: 'PPh 21', amount: 125000 }
-      ];
-
-      setThemeColor('#E53F6A');
-      renderIncomeRows();
-      renderDeductionRows();
-    }
-
     // --- DOWNLOAD AS PDF (CLIENT-SIDE) ---
     async function handleDownloadPDF() {
       const element = document.getElementById('slip-printable-area');
@@ -862,24 +1803,9 @@
       const period = document.getElementById('period-text').innerText.trim() || 'Periode';
       const cleanFileName = `Slip_Gaji_${employeeName.replace(/[^a-zA-Z0-9]/g, '_')}_${period.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
 
-      // Show temporary loading indicator
-      const downloadBtns = [
-        document.getElementById('btn-top-download'),
-        document.getElementById('btn-mid-download'),
-        document.getElementById('btn-bottom-download')
-      ];
-
-      downloadBtns.forEach(btn => {
-        if (btn) {
-          btn.disabled = true;
-          btn.innerHTML = `<span class="inline-block animate-spin mr-2">⏳</span> Mengunduh PDF...`;
-        }
-      });
-
       try {
         const { jsPDF } = window.jspdf;
         
-        // High quality canvas capture
         const canvas = await html2canvas(element, {
           scale: 2,
           useCORS: true,
@@ -899,14 +1825,6 @@
       } catch (err) {
         console.error('PDF Generation failed, fallback to print:', err);
         window.print();
-      } finally {
-        downloadBtns.forEach(btn => {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = `<i data-lucide="download" class="w-4 h-4"></i><span>Download Slip Gaji</span>`;
-          }
-        });
-        lucide.createIcons();
       }
     }
 
@@ -931,7 +1849,7 @@
         `*TAKE HOME PAY: ${thp}*\n` +
         `(${terbilangText})\n` +
         `--------------------------------\n` +
-        `Dibuat via Slip Superapp`;
+        `Dibuat via Superapp HRIS & Payroll`;
 
       const encoded = encodeURIComponent(message);
       window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
@@ -939,12 +1857,13 @@
 
     // --- INIT ON LOAD ---
     window.addEventListener('DOMContentLoaded', () => {
-      // Set current date in footer
       const now = new Date();
       const options = { day: 'numeric', month: 'short', year: 'numeric' };
-      document.getElementById('current-print-date').innerText = now.toLocaleDateString('id-ID', options);
+      const elDate = document.getElementById('current-print-date');
+      if (elDate) elDate.innerText = now.toLocaleDateString('id-ID', options);
 
       initColorPalette();
+      renderEmployeeDirectory();
       renderIncomeRows();
       renderDeductionRows();
       lucide.createIcons();
