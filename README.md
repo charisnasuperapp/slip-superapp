@@ -1,7 +1,7 @@
 # Slip Superapp (Generator Slip Gaji Online)
 
 > **Generator Slip Gaji Karyawan Praktis, Cepat, dan 100% Gratis**  
-> Dibuat untuk ekosistem **CHARISNA SuperApp**. Terinspirasi dari alat generator slip gaji [slip.gajihub.com](https://slip.gajihub.com/), direkayasa secara bersih (*clean-room reverse-engineered*) menggunakan tool **REA (Reverse Engineer Anything)**.
+> Dibuat untuk ekosistem **CHARISNA SuperApp**.
 
 ---
 
