@@ -78,6 +78,18 @@
       cursor: text;
     }
 
+    /* Real-time currency input styling */
+    .currency-input {
+      outline: none;
+      transition: all 0.15s ease;
+      font-variant-numeric: tabular-nums;
+    }
+    .currency-input:focus {
+      background-color: #FFFFFF !important;
+      border-color: var(--theme-color) !important;
+      box-shadow: 0 0 0 1px var(--theme-color);
+    }
+
     /* Print Specific Rules */
     @media print {
       body * {
@@ -105,8 +117,14 @@
         box-shadow: none !important;
         background: transparent !important;
       }
-      .btn-delete-row {
+      .btn-delete-row, .btn-tambah-baris-container {
         display: none !important;
+      }
+      .currency-input {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
       }
     }
 
@@ -277,69 +295,67 @@
       </div>
 
       <!-- TABLES: Pendapatan (Kiri) & Potongan (Kanan) -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         
         <!-- TABEL PENDAPATAN -->
-        <div class="border border-slate-300 rounded overflow-hidden flex flex-col justify-between">
-          <div>
-            <!-- Table Header -->
-            <div class="theme-bg text-white px-3 py-2 flex items-center justify-between font-bold text-sm tracking-wide">
-              <span>Komponen Pendapatan</span>
-              <span>Jumlah</span>
-            </div>
-
-            <!-- Table Rows Container -->
-            <div id="income-rows-container" class="divide-y divide-slate-200 text-sm">
-              <!-- Dynamic Rows inserted via JS -->
-            </div>
+        <div class="flex flex-col">
+          <div class="w-full">
+            <table class="w-full border-collapse border border-slate-900 text-sm bg-white shadow-sm">
+              <thead>
+                <tr class="theme-bg text-white">
+                  <th class="border-r border-slate-900 px-3 py-2 text-left font-semibold w-1/2">Komponen Pendapatan</th>
+                  <th class="px-3 py-2 text-right font-semibold w-1/2">Jumlah</th>
+                </tr>
+              </thead>
+              <tbody id="income-table-body">
+                <!-- Injected via JS -->
+              </tbody>
+              <tfoot>
+                <tr class="font-bold border-t border-slate-900 bg-slate-50">
+                  <td class="border-r border-slate-900 px-3 py-2.5 text-slate-900">Total Pendapatan</td>
+                  <td class="px-3 py-2.5 text-right font-bold text-slate-900" id="total-income-display">Rp 0</td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
 
-          <div>
-            <!-- Add Row Button -->
-            <div class="p-2 bg-slate-50 border-t border-slate-200 no-print">
-              <button onclick="addIncomeRow()" class="w-full py-1.5 px-3 rounded text-xs font-semibold theme-text hover:bg-slate-100 flex items-center justify-center gap-1.5 transition-all">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                <span>Tambah Baris</span>
-              </button>
-            </div>
-
-            <!-- Total Pendapatan -->
-            <div class="bg-slate-50 px-3 py-2.5 flex items-center justify-between font-bold text-sm border-t border-slate-300">
-              <span class="text-slate-800">Total Pendapatan</span>
-              <span id="total-income-display" class="theme-text text-base">Rp 0</span>
-            </div>
+          <!-- + Tambah Baris Button (Right-aligned under table) -->
+          <div class="flex justify-end mt-2 btn-tambah-baris-container no-print">
+            <button onclick="addIncomeRow()" class="theme-bg hover:opacity-95 text-white font-semibold text-xs px-4 py-2 rounded-md shadow-sm flex items-center gap-1.5 transition-all">
+              <span class="text-sm font-bold leading-none">+</span>
+              <span>Tambah Baris</span>
+            </button>
           </div>
         </div>
 
         <!-- TABEL POTONGAN -->
-        <div class="border border-slate-300 rounded overflow-hidden flex flex-col justify-between">
-          <div>
-            <!-- Table Header -->
-            <div class="theme-bg text-white px-3 py-2 flex items-center justify-between font-bold text-sm tracking-wide">
-              <span>Komponen Potongan</span>
-              <span>Jumlah</span>
-            </div>
-
-            <!-- Table Rows Container -->
-            <div id="deduction-rows-container" class="divide-y divide-slate-200 text-sm">
-              <!-- Dynamic Rows inserted via JS -->
-            </div>
+        <div class="flex flex-col">
+          <div class="w-full">
+            <table class="w-full border-collapse border border-slate-900 text-sm bg-white shadow-sm">
+              <thead>
+                <tr class="theme-bg text-white">
+                  <th class="border-r border-slate-900 px-3 py-2 text-left font-semibold w-1/2">Komponen Potongan</th>
+                  <th class="px-3 py-2 text-right font-semibold w-1/2">Jumlah</th>
+                </tr>
+              </thead>
+              <tbody id="deduction-table-body">
+                <!-- Injected via JS -->
+              </tbody>
+              <tfoot>
+                <tr class="font-bold border-t border-slate-900 bg-slate-50">
+                  <td class="border-r border-slate-900 px-3 py-2.5 text-slate-900">Total Potongan</td>
+                  <td class="px-3 py-2.5 text-right font-bold text-red-600" id="total-deduction-display">Rp 0</td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
 
-          <div>
-            <!-- Add Row Button -->
-            <div class="p-2 bg-slate-50 border-t border-slate-200 no-print">
-              <button onclick="addDeductionRow()" class="w-full py-1.5 px-3 rounded text-xs font-semibold theme-text hover:bg-slate-100 flex items-center justify-center gap-1.5 transition-all">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                <span>Tambah Baris</span>
-              </button>
-            </div>
-
-            <!-- Total Potongan -->
-            <div class="bg-slate-50 px-3 py-2.5 flex items-center justify-between font-bold text-sm border-t border-slate-300">
-              <span class="text-slate-800">Total Potongan</span>
-              <span id="total-deduction-display" class="text-red-600 text-base">Rp 0</span>
-            </div>
+          <!-- + Tambah Baris Button (Right-aligned under table) -->
+          <div class="flex justify-end mt-2 btn-tambah-baris-container no-print">
+            <button onclick="addDeductionRow()" class="theme-bg hover:opacity-95 text-white font-semibold text-xs px-4 py-2 rounded-md shadow-sm flex items-center gap-1.5 transition-all">
+              <span class="text-sm font-bold leading-none">+</span>
+              <span>Tambah Baris</span>
+            </button>
           </div>
         </div>
 
@@ -498,6 +514,52 @@
       return parseInt(clean, 10) || 0;
     }
 
+    // --- REALTIME AUTO THOUSAND SEPARATOR (TITIK OTOMATIS SAAT KETIK NOL) ---
+    function handleCurrencyInput(input, id, type) {
+      const originalValue = input.value;
+      const cursor = input.selectionStart;
+      
+      // Hitung berapa digit angka yang berada sebelum posisi kursor saat ini
+      const digitsBeforeCursor = originalValue.slice(0, cursor).replace(/\D/g, '').length;
+      
+      // Ambil hanya digit angka
+      const rawDigits = originalValue.replace(/\D/g, '');
+      
+      if (!rawDigits) {
+        input.value = '0';
+        if (type === 'income') updateIncomeAmount(id, 0);
+        else updateDeductionAmount(id, 0);
+        input.setSelectionRange(1, 1);
+        return;
+      }
+      
+      // Format angka dengan separator titik (Indonesian locale)
+      const num = parseInt(rawDigits, 10);
+      const formatted = num.toLocaleString('id-ID');
+      input.value = formatted;
+      
+      // Update state data & hitung ulang total
+      if (type === 'income') updateIncomeAmount(id, num);
+      else updateDeductionAmount(id, num);
+      
+      // Kembalikan kursor ke posisi yang tepat sehingga pengetikan nol beruntun sangat mulus
+      let newCursor = 0;
+      let digitCount = 0;
+      for (let i = 0; i < formatted.length; i++) {
+        if (/\d/.test(formatted[i])) {
+          digitCount++;
+        }
+        if (digitCount === digitsBeforeCursor) {
+          newCursor = i + 1;
+          break;
+        }
+      }
+      if (digitsBeforeCursor === 0) newCursor = 0;
+      if (digitsBeforeCursor >= rawDigits.length) newCursor = formatted.length;
+      
+      input.setSelectionRange(newCursor, newCursor);
+    }
+
     // --- TERBILANG INDONESIA ---
     function terbilang(angka) {
       angka = Math.floor(Math.abs(angka));
@@ -529,44 +591,46 @@
       return hasil.replace(/\s+/g, ' ').trim();
     }
 
-    // --- RENDER TABLES ---
+    // --- RENDER TABLES (MATCHING GAJIHUB EXACT BORDER & TRASH OUTSIDE) ---
     function renderIncomeRows() {
-      const container = document.getElementById('income-rows-container');
+      const container = document.getElementById('income-table-body');
       container.innerHTML = '';
 
       incomeList.forEach((item) => {
-        const row = document.createElement('div');
-        row.className = 'grid grid-cols-12 divide-x divide-slate-200 hover:bg-slate-50/80 group transition-all items-center py-1.5 px-3';
-        row.innerHTML = `
-          <div class="col-span-7 pr-2">
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-slate-900 hover:bg-slate-50/60 transition-colors group relative';
+        tr.innerHTML = `
+          <td class="border-r border-slate-900 px-3 py-2 w-1/2 align-middle">
             <span 
               contenteditable="true" 
-              class="font-medium text-slate-700 block"
+              class="font-medium text-slate-800 block"
               spellcheck="false"
               onblur="updateIncomeName(${item.id}, this.innerText)"
             >${item.name}</span>
-          </div>
-          <div class="col-span-5 pl-2 flex items-center justify-between">
-            <span class="text-xs text-slate-400 font-medium shrink-0">Rp</span>
-            <span 
-              contenteditable="true" 
-              class="font-semibold text-slate-800 text-right flex-1 mx-1"
-              spellcheck="false"
-              onfocus="this.innerText = cleanNumber(this.innerText) || ''"
-              onblur="handleIncomeAmountBlur(${item.id}, this)"
-              oninput="handleIncomeAmountInput(${item.id}, this)"
-            >${(item.amount || 0).toLocaleString('id-ID')}</span>
-            <button 
-              type="button" 
-              onclick="removeIncomeRow(${item.id})" 
-              class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1 no-print btn-delete-row shrink-0"
-              title="Hapus Baris"
-            >
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
+          </td>
+          <td class="px-3 py-2 w-1/2 align-middle text-right relative">
+            <div class="flex items-center justify-end">
+              <span class="text-xs text-slate-400 font-medium mr-1.5 shrink-0 select-none">Rp</span>
+              <input 
+                type="text" 
+                inputmode="numeric"
+                value="${(item.amount || 0).toLocaleString('id-ID')}" 
+                class="currency-input w-28 sm:w-36 text-right font-semibold text-slate-900 border border-slate-300 rounded px-2 py-1 bg-slate-50/70 text-sm"
+                oninput="handleCurrencyInput(this, ${item.id}, 'income')"
+              />
+              <!-- Delete Trash Icon Outside Table -->
+              <button 
+                type="button" 
+                onclick="removeIncomeRow(${item.id})" 
+                class="btn-delete-row absolute -right-8 top-1/2 -translate-y-1/2 p-1 rounded border border-[#E53F6A] text-[#E53F6A] hover:bg-pink-50 transition-all no-print flex items-center justify-center bg-white shadow-xs"
+                title="Hapus Baris"
+              >
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </td>
         `;
-        container.appendChild(row);
+        container.appendChild(tr);
       });
 
       lucide.createIcons();
@@ -574,42 +638,44 @@
     }
 
     function renderDeductionRows() {
-      const container = document.getElementById('deduction-rows-container');
+      const container = document.getElementById('deduction-table-body');
       container.innerHTML = '';
 
       deductionList.forEach((item) => {
-        const row = document.createElement('div');
-        row.className = 'grid grid-cols-12 divide-x divide-slate-200 hover:bg-slate-50/80 group transition-all items-center py-1.5 px-3';
-        row.innerHTML = `
-          <div class="col-span-7 pr-2">
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-slate-900 hover:bg-slate-50/60 transition-colors group relative';
+        tr.innerHTML = `
+          <td class="border-r border-slate-900 px-3 py-2 w-1/2 align-middle">
             <span 
               contenteditable="true" 
-              class="font-medium text-slate-700 block"
+              class="font-medium text-slate-800 block"
               spellcheck="false"
               onblur="updateDeductionName(${item.id}, this.innerText)"
             >${item.name}</span>
-          </div>
-          <div class="col-span-5 pl-2 flex items-center justify-between">
-            <span class="text-xs text-slate-400 font-medium shrink-0">Rp</span>
-            <span 
-              contenteditable="true" 
-              class="font-semibold text-slate-800 text-right flex-1 mx-1"
-              spellcheck="false"
-              onfocus="this.innerText = cleanNumber(this.innerText) || ''"
-              onblur="handleDeductionAmountBlur(${item.id}, this)"
-              oninput="handleDeductionAmountInput(${item.id}, this)"
-            >${(item.amount || 0).toLocaleString('id-ID')}</span>
-            <button 
-              type="button" 
-              onclick="removeDeductionRow(${item.id})" 
-              class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1 no-print btn-delete-row shrink-0"
-              title="Hapus Baris"
-            >
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
+          </td>
+          <td class="px-3 py-2 w-1/2 align-middle text-right relative">
+            <div class="flex items-center justify-end">
+              <span class="text-xs text-slate-400 font-medium mr-1.5 shrink-0 select-none">Rp</span>
+              <input 
+                type="text" 
+                inputmode="numeric"
+                value="${(item.amount || 0).toLocaleString('id-ID')}" 
+                class="currency-input w-28 sm:w-36 text-right font-semibold text-slate-900 border border-slate-300 rounded px-2 py-1 bg-slate-50/70 text-sm"
+                oninput="handleCurrencyInput(this, ${item.id}, 'deduction')"
+              />
+              <!-- Delete Trash Icon Outside Table -->
+              <button 
+                type="button" 
+                onclick="removeDeductionRow(${item.id})" 
+                class="btn-delete-row absolute -right-8 top-1/2 -translate-y-1/2 p-1 rounded border border-[#E53F6A] text-[#E53F6A] hover:bg-pink-50 transition-all no-print flex items-center justify-center bg-white shadow-xs"
+                title="Hapus Baris"
+              >
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </td>
         `;
-        container.appendChild(row);
+        container.appendChild(tr);
       });
 
       lucide.createIcons();
@@ -633,21 +699,12 @@
 
     function updateIncomeName(id, val) {
       const item = incomeList.find(x => x.id === id);
-      if (item) item.name = val.trim() || 'Komponen';
+      if (item) item.name = val.trim() || 'Nama Komponen';
     }
 
-    function handleIncomeAmountInput(id, el) {
-      const num = cleanNumber(el.innerText);
+    function updateIncomeAmount(id, val) {
       const item = incomeList.find(x => x.id === id);
-      if (item) item.amount = num;
-      recalculateTotals();
-    }
-
-    function handleIncomeAmountBlur(id, el) {
-      const num = cleanNumber(el.innerText);
-      const item = incomeList.find(x => x.id === id);
-      if (item) item.amount = num;
-      el.innerText = num.toLocaleString('id-ID');
+      if (item) item.amount = cleanNumber(val);
       recalculateTotals();
     }
 
@@ -667,21 +724,12 @@
 
     function updateDeductionName(id, val) {
       const item = deductionList.find(x => x.id === id);
-      if (item) item.name = val.trim() || 'Komponen';
+      if (item) item.name = val.trim() || 'Nama Komponen';
     }
 
-    function handleDeductionAmountInput(id, el) {
-      const num = cleanNumber(el.innerText);
+    function updateDeductionAmount(id, val) {
       const item = deductionList.find(x => x.id === id);
-      if (item) item.amount = num;
-      recalculateTotals();
-    }
-
-    function handleDeductionAmountBlur(id, el) {
-      const num = cleanNumber(el.innerText);
-      const item = deductionList.find(x => x.id === id);
-      if (item) item.amount = num;
-      el.innerText = num.toLocaleString('id-ID');
+      if (item) item.amount = cleanNumber(val);
       recalculateTotals();
     }
 
@@ -837,7 +885,8 @@
           useCORS: true,
           logging: false,
           backgroundColor: '#FFFFFF',
-          windowWidth: element.scrollWidth
+          windowWidth: element.scrollWidth,
+          ignoreElements: (el) => el.classList.contains('btn-delete-row') || el.classList.contains('btn-tambah-baris-container') || el.classList.contains('no-print')
         });
 
         const imgData = canvas.toDataURL('image/png');
