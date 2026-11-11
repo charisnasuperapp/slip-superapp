@@ -42,6 +42,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background-color: #F8FAFC;
       color: #1E293B;
+      line-height: 1.5;
     }
 
     .theme-bg {
@@ -56,8 +57,25 @@
       border-color: var(--theme-color) !important;
     }
 
-    .theme-ring:focus {
-      --tw-ring-color: var(--theme-color) !important;
+    /* Contenteditable inline styling: natural document feel, zero clipping */
+    [contenteditable="true"] {
+      outline: none;
+      border-radius: 3px;
+      padding: 1px 4px;
+      margin: -1px -4px;
+      transition: background-color 0.15s ease, box-shadow 0.15s ease;
+      min-width: 24px;
+      display: inline-block;
+      line-height: inherit;
+    }
+    [contenteditable="true"]:hover {
+      background-color: #F1F5F9;
+      cursor: text;
+    }
+    [contenteditable="true"]:focus {
+      background-color: #FFFFFF;
+      box-shadow: 0 0 0 1.5px var(--theme-color);
+      cursor: text;
     }
 
     /* Print Specific Rules */
@@ -76,57 +94,31 @@
         margin: 0;
         padding: 24px;
         box-shadow: none !important;
-        border: 1px solid #E2E8F0 !important;
+        border: 1px solid #CBD5E1 !important;
       }
       .no-print {
         display: none !important;
       }
-      input, select {
-        border: none !important;
-        background: transparent !important;
+      [contenteditable="true"] {
         padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
       }
       .btn-delete-row {
         display: none !important;
       }
     }
 
-    /* Custom inline input styling for sleek editable look */
-    .editable-input {
-      background: transparent;
-      border-bottom: 1px dashed transparent;
-      transition: all 0.2s ease;
-    }
-    .editable-input:hover {
-      border-bottom-color: #CBD5E1;
-      background: rgba(241, 245, 249, 0.5);
-    }
-    .editable-input:focus {
-      outline: none;
-      border-bottom-color: var(--theme-color);
-      background: #FFFFFF;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-
-    /* Hide arrow spinners on number input */
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
-      -webkit-appearance: none; 
-      margin: 0; 
-    }
-    input[type=number] {
-      -moz-appearance: textfield;
-    }
-
     .color-swatch {
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
     .color-swatch:hover {
-      transform: scale(1.15);
+      transform: scale(1.18);
       z-index: 10;
     }
     .color-swatch.active {
-      transform: scale(1.15);
+      transform: scale(1.18);
       box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--theme-color);
     }
   </style>
@@ -141,7 +133,7 @@
         Superapp Payroll Tool
       </span>
       <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
-        100% Gratis & Tanpa Registrasi
+        100% Gratis &amp; Tanpa Registrasi
       </span>
     </div>
 
@@ -181,27 +173,27 @@
     <div id="slip-printable-area" class="bg-white rounded-xl shadow-lg border border-slate-200 p-6 sm:p-10 transition-all">
       
       <!-- TOP BANNER: Pribadi & Rahasia -->
-      <div class="border border-slate-300 rounded px-4 py-2 text-center mb-6">
-        <input 
-          type="text" 
+      <div class="border border-slate-300 rounded px-4 py-2.5 text-center mb-6">
+        <div 
+          contenteditable="true" 
           id="confidential-text" 
-          value="Pribadi &amp; Rahasia" 
-          class="text-center font-bold text-sm tracking-wide uppercase theme-text w-full editable-input focus:ring-0" 
+          class="font-bold text-sm tracking-wide uppercase theme-text block text-center"
+          spellcheck="false"
           title="Klik untuk mengubah label kerahasiaan"
-        />
+        >Pribadi &amp; Rahasia</div>
       </div>
 
       <!-- HEADER: Company Name & Logo -->
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-200 mb-6">
         <div class="flex-1">
-          <label class="block text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1 no-print">Nama Perusahaan</label>
-          <input 
-            type="text" 
+          <div class="text-[11px] uppercase tracking-wider text-slate-400 font-bold mb-1 no-print">NAMA PERUSAHAAN</div>
+          <div 
+            contenteditable="true" 
             id="company-name" 
-            value="Nama Perusahaan Anda" 
-            class="text-2xl sm:text-3xl font-extrabold text-slate-900 w-full editable-input px-1 py-0.5 rounded"
-            placeholder="Ketik Nama Perusahaan..."
-          />
+            class="text-2xl sm:text-3xl font-extrabold text-slate-900 block"
+            spellcheck="false"
+            title="Klik untuk mengubah nama perusahaan"
+          >Nama Perusahaan Anda</div>
         </div>
 
         <!-- Logo Upload & Display -->
@@ -225,111 +217,61 @@
         
         <!-- Kolom Kiri -->
         <div class="space-y-2.5">
-          <div class="flex items-center">
-            <span class="w-36 text-slate-500 font-medium">Slip Gaji Periode</span>
-            <span class="mr-2 text-slate-400">:</span>
-            <input 
-              type="text" 
-              id="period-text" 
-              value="01 Nov 2026 - 30 Nov 2026" 
-              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
-            />
+          <div class="flex items-baseline">
+            <span class="w-36 text-slate-500 font-medium shrink-0">Slip Gaji Periode</span>
+            <span class="mr-2 text-slate-400 shrink-0">:</span>
+            <span contenteditable="true" id="period-text" class="font-semibold text-slate-800" spellcheck="false">01 Nov 2026 - 30 Nov 2026</span>
           </div>
 
-          <div class="flex items-center">
-            <span class="w-36 text-slate-500 font-medium">Nama</span>
-            <span class="mr-2 text-slate-400">:</span>
-            <input 
-              type="text" 
-              id="employee-name" 
-              value="Nama Karyawan" 
-              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
-            />
+          <div class="flex items-baseline">
+            <span class="w-36 text-slate-500 font-medium shrink-0">Nama</span>
+            <span class="mr-2 text-slate-400 shrink-0">:</span>
+            <span contenteditable="true" id="employee-name" class="font-semibold text-slate-800" spellcheck="false">Nama Karyawan</span>
           </div>
 
-          <div class="flex items-center">
-            <span class="w-36 text-slate-500 font-medium">ID Karyawan</span>
-            <span class="mr-2 text-slate-400">:</span>
-            <input 
-              type="text" 
-              id="employee-id" 
-              value="123456789" 
-              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
-            />
+          <div class="flex items-baseline">
+            <span class="w-36 text-slate-500 font-medium shrink-0">ID Karyawan</span>
+            <span class="mr-2 text-slate-400 shrink-0">:</span>
+            <span contenteditable="true" id="employee-id" class="font-semibold text-slate-800" spellcheck="false">123456789</span>
           </div>
 
-          <div class="flex items-center">
-            <span class="w-36 text-slate-500 font-medium">Bagian</span>
-            <span class="mr-2 text-slate-400">:</span>
-            <input 
-              type="text" 
-              id="employee-department" 
-              value="CEO" 
-              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
-            />
+          <div class="flex items-baseline">
+            <span class="w-36 text-slate-500 font-medium shrink-0">Bagian</span>
+            <span class="mr-2 text-slate-400 shrink-0">:</span>
+            <span contenteditable="true" id="employee-department" class="font-semibold text-slate-800" spellcheck="false">CEO</span>
           </div>
 
-          <div class="flex items-center">
-            <span class="w-36 text-slate-500 font-medium">Job Title</span>
-            <span class="mr-2 text-slate-400">:</span>
-            <input 
-              type="text" 
-              id="employee-job-title" 
-              value="Commissioner" 
-              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
-            />
+          <div class="flex items-baseline">
+            <span class="w-36 text-slate-500 font-medium shrink-0">Job Title</span>
+            <span class="mr-2 text-slate-400 shrink-0">:</span>
+            <span contenteditable="true" id="employee-job-title" class="font-semibold text-slate-800" spellcheck="false">Commissioner</span>
           </div>
         </div>
 
         <!-- Kolom Kanan -->
         <div class="space-y-2.5">
-          <div class="flex items-center">
-            <span class="w-40 text-slate-500 font-medium">Golongan</span>
-            <span class="mr-2 text-slate-400">:</span>
-            <input 
-              type="text" 
-              id="employee-grade" 
-              value="BOD" 
-              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
-            />
+          <div class="flex items-baseline">
+            <span class="w-40 text-slate-500 font-medium shrink-0">Golongan</span>
+            <span class="mr-2 text-slate-400 shrink-0">:</span>
+            <span contenteditable="true" id="employee-grade" class="font-semibold text-slate-800" spellcheck="false">BOD</span>
           </div>
 
-          <div class="flex items-center">
-            <span class="w-40 text-slate-500 font-medium">Status Karyawan</span>
-            <span class="mr-2 text-slate-400">:</span>
-            <select id="employee-status" class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5 cursor-pointer">
-              <option value="Tetap" selected>Tetap</option>
-              <option value="Kontrak">Kontrak</option>
-              <option value="Probation">Probation</option>
-              <option value="Freelance">Freelance</option>
-              <option value="Magang">Magang</option>
-            </select>
+          <div class="flex items-baseline">
+            <span class="w-40 text-slate-500 font-medium shrink-0">Status Karyawan</span>
+            <span class="mr-2 text-slate-400 shrink-0">:</span>
+            <span contenteditable="true" id="employee-status" class="font-semibold text-slate-800" spellcheck="false">Tetap</span>
           </div>
 
-          <div class="flex items-center">
-            <span class="w-40 text-slate-500 font-medium">Status PTKP</span>
-            <span class="mr-2 text-slate-400">:</span>
-            <select id="employee-ptkp" class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5 cursor-pointer">
-              <option value="TK0" selected>TK0 (Tidak Kawin - 0 Tanggungan)</option>
-              <option value="TK1">TK1 (Tidak Kawin - 1 Tanggungan)</option>
-              <option value="TK2">TK2 (Tidak Kawin - 2 Tanggungan)</option>
-              <option value="TK3">TK3 (Tidak Kawin - 3 Tanggungan)</option>
-              <option value="K0">K0 (Kawin - 0 Tanggungan)</option>
-              <option value="K1">K1 (Kawin - 1 Tanggungan)</option>
-              <option value="K2">K2 (Kawin - 2 Tanggungan)</option>
-              <option value="K3">K3 (Kawin - 3 Tanggungan)</option>
-            </select>
+          <div class="flex items-baseline">
+            <span class="w-40 text-slate-500 font-medium shrink-0">Status PTKP</span>
+            <span class="mr-2 text-slate-400 shrink-0">:</span>
+            <span contenteditable="true" id="employee-ptkp" class="font-semibold text-slate-800" spellcheck="false">TK0</span>
           </div>
 
-          <div class="flex items-center">
-            <span class="w-40 text-slate-500 font-medium">Tanggal Bergabung</span>
-            <span class="mr-2 text-slate-400">:</span>
-            <input 
-              type="text" 
-              id="employee-join-date" 
-              value="11 Nov 2026" 
-              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
-            />
+          <div class="flex items-baseline">
+            <span class="w-40 text-slate-500 font-medium shrink-0">Tanggal Bergabung</span>
+            <span class="mr-2 text-slate-400 shrink-0">:</span>
+            <span contenteditable="true" id="employee-join-date" class="font-semibold text-slate-800" spellcheck="false">11 Nov 2026</span>
           </div>
         </div>
       </div>
@@ -338,23 +280,23 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         
         <!-- TABEL PENDAPATAN -->
-        <div class="border border-slate-200 rounded-lg overflow-hidden flex flex-col justify-between">
+        <div class="border border-slate-300 rounded overflow-hidden flex flex-col justify-between">
           <div>
             <!-- Table Header -->
-            <div class="theme-bg text-white px-4 py-2.5 flex items-center justify-between font-bold text-sm tracking-wide">
+            <div class="theme-bg text-white px-3 py-2 flex items-center justify-between font-bold text-sm tracking-wide">
               <span>Komponen Pendapatan</span>
               <span>Jumlah</span>
             </div>
 
             <!-- Table Rows Container -->
-            <div id="income-rows-container" class="divide-y divide-slate-100 text-sm">
+            <div id="income-rows-container" class="divide-y divide-slate-200 text-sm">
               <!-- Dynamic Rows inserted via JS -->
             </div>
           </div>
 
           <div>
             <!-- Add Row Button -->
-            <div class="p-2 bg-slate-50 border-t border-slate-100 no-print">
+            <div class="p-2 bg-slate-50 border-t border-slate-200 no-print">
               <button onclick="addIncomeRow()" class="w-full py-1.5 px-3 rounded text-xs font-semibold theme-text hover:bg-slate-100 flex items-center justify-center gap-1.5 transition-all">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i>
                 <span>Tambah Baris</span>
@@ -362,7 +304,7 @@
             </div>
 
             <!-- Total Pendapatan -->
-            <div class="bg-slate-100/80 px-4 py-3 flex items-center justify-between font-bold text-sm border-t border-slate-200">
+            <div class="bg-slate-50 px-3 py-2.5 flex items-center justify-between font-bold text-sm border-t border-slate-300">
               <span class="text-slate-800">Total Pendapatan</span>
               <span id="total-income-display" class="theme-text text-base">Rp 0</span>
             </div>
@@ -370,23 +312,23 @@
         </div>
 
         <!-- TABEL POTONGAN -->
-        <div class="border border-slate-200 rounded-lg overflow-hidden flex flex-col justify-between">
+        <div class="border border-slate-300 rounded overflow-hidden flex flex-col justify-between">
           <div>
             <!-- Table Header -->
-            <div class="theme-bg text-white px-4 py-2.5 flex items-center justify-between font-bold text-sm tracking-wide">
+            <div class="theme-bg text-white px-3 py-2 flex items-center justify-between font-bold text-sm tracking-wide">
               <span>Komponen Potongan</span>
               <span>Jumlah</span>
             </div>
 
             <!-- Table Rows Container -->
-            <div id="deduction-rows-container" class="divide-y divide-slate-100 text-sm">
+            <div id="deduction-rows-container" class="divide-y divide-slate-200 text-sm">
               <!-- Dynamic Rows inserted via JS -->
             </div>
           </div>
 
           <div>
             <!-- Add Row Button -->
-            <div class="p-2 bg-slate-50 border-t border-slate-100 no-print">
+            <div class="p-2 bg-slate-50 border-t border-slate-200 no-print">
               <button onclick="addDeductionRow()" class="w-full py-1.5 px-3 rounded text-xs font-semibold theme-text hover:bg-slate-100 flex items-center justify-center gap-1.5 transition-all">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i>
                 <span>Tambah Baris</span>
@@ -394,7 +336,7 @@
             </div>
 
             <!-- Total Potongan -->
-            <div class="bg-slate-100/80 px-4 py-3 flex items-center justify-between font-bold text-sm border-t border-slate-200">
+            <div class="bg-slate-50 px-3 py-2.5 flex items-center justify-between font-bold text-sm border-t border-slate-300">
               <span class="text-slate-800">Total Potongan</span>
               <span id="total-deduction-display" class="text-red-600 text-base">Rp 0</span>
             </div>
@@ -408,49 +350,34 @@
         
         <!-- Info Rekening Bank -->
         <div class="space-y-2 text-sm">
-          <div class="flex items-center">
-            <span class="w-44 text-slate-500 font-medium">Nama Bank</span>
-            <span class="mr-2 text-slate-400">:</span>
-            <input 
-              type="text" 
-              id="bank-name" 
-              value="BCA" 
-              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
-            />
+          <div class="flex items-baseline">
+            <span class="w-44 text-slate-500 font-medium shrink-0">Nama Bank</span>
+            <span class="mr-2 text-slate-400 shrink-0">:</span>
+            <span contenteditable="true" id="bank-name" class="font-semibold text-slate-800" spellcheck="false">BCA</span>
           </div>
 
-          <div class="flex items-center">
-            <span class="w-44 text-slate-500 font-medium">Nomor Rekening</span>
-            <span class="mr-2 text-slate-400">:</span>
-            <input 
-              type="text" 
-              id="bank-number" 
-              value="12341234" 
-              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
-            />
+          <div class="flex items-baseline">
+            <span class="w-44 text-slate-500 font-medium shrink-0">Nomor Rekening</span>
+            <span class="mr-2 text-slate-400 shrink-0">:</span>
+            <span contenteditable="true" id="bank-number" class="font-semibold text-slate-800" spellcheck="false">12341234</span>
           </div>
 
-          <div class="flex items-center">
-            <span class="w-44 text-slate-500 font-medium">Nama Pemilik Rekening</span>
-            <span class="mr-2 text-slate-400">:</span>
-            <input 
-              type="text" 
-              id="bank-owner" 
-              value="Nama Pemilik Rekening" 
-              class="flex-1 font-semibold text-slate-800 editable-input px-1 py-0.5" 
-            />
+          <div class="flex items-baseline">
+            <span class="w-44 text-slate-500 font-medium shrink-0">Nama Pemilik Rekening</span>
+            <span class="mr-2 text-slate-400 shrink-0">:</span>
+            <span contenteditable="true" id="bank-owner" class="font-semibold text-slate-800" spellcheck="false">Nama Pemilik Rekening</span>
           </div>
         </div>
 
         <!-- Take Home Pay Card -->
         <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 text-right">
           <div class="text-xs uppercase tracking-wider font-bold text-slate-500 mb-1">
-            Take Home Pay
+            TAKE HOME PAY
           </div>
           <div id="take-home-pay-display" class="text-2xl sm:text-3xl font-black theme-text tracking-tight mb-1">
             Rp 0
           </div>
-          <div id="terbilang-display" class="text-xs italic text-slate-500">
+          <div id="terbilang-display" class="text-xs italic text-slate-500 leading-relaxed">
             Nol Rupiah
           </div>
         </div>
@@ -607,34 +534,32 @@
       const container = document.getElementById('income-rows-container');
       container.innerHTML = '';
 
-      incomeList.forEach((item, index) => {
+      incomeList.forEach((item) => {
         const row = document.createElement('div');
-        row.className = 'flex items-center justify-between px-4 py-2 hover:bg-slate-50 group transition-all';
+        row.className = 'grid grid-cols-12 divide-x divide-slate-200 hover:bg-slate-50/80 group transition-all items-center py-1.5 px-3';
         row.innerHTML = `
-          <div class="flex-1 flex items-center gap-2">
-            <input 
-              type="text" 
-              value="${item.name}" 
-              placeholder="Nama Komponen"
-              onchange="updateIncomeName(${item.id}, this.value)"
-              class="w-full font-medium text-slate-700 editable-input px-1 py-0.5 rounded"
-            />
+          <div class="col-span-7 pr-2">
+            <span 
+              contenteditable="true" 
+              class="font-medium text-slate-700 block"
+              spellcheck="false"
+              onblur="updateIncomeName(${item.id}, this.innerText)"
+            >${item.name}</span>
           </div>
-          <div class="flex items-center gap-2 w-48 justify-end">
-            <span class="text-xs text-slate-400 font-medium">Rp</span>
-            <input 
-              type="text" 
-              value="${item.amount.toLocaleString('id-ID')}" 
-              placeholder="0"
-              onfocus="this.value = cleanNumber(this.value) || ''"
-              onblur="this.value = (cleanNumber(this.value)).toLocaleString('id-ID')"
-              oninput="updateIncomeAmount(${item.id}, this.value)"
-              class="w-32 text-right font-semibold text-slate-800 editable-input px-1 py-0.5 rounded"
-            />
+          <div class="col-span-5 pl-2 flex items-center justify-between">
+            <span class="text-xs text-slate-400 font-medium shrink-0">Rp</span>
+            <span 
+              contenteditable="true" 
+              class="font-semibold text-slate-800 text-right flex-1 mx-1"
+              spellcheck="false"
+              onfocus="this.innerText = cleanNumber(this.innerText) || ''"
+              onblur="handleIncomeAmountBlur(${item.id}, this)"
+              oninput="handleIncomeAmountInput(${item.id}, this)"
+            >${(item.amount || 0).toLocaleString('id-ID')}</span>
             <button 
               type="button" 
               onclick="removeIncomeRow(${item.id})" 
-              class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1 no-print btn-delete-row"
+              class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1 no-print btn-delete-row shrink-0"
               title="Hapus Baris"
             >
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
@@ -652,34 +577,32 @@
       const container = document.getElementById('deduction-rows-container');
       container.innerHTML = '';
 
-      deductionList.forEach((item, index) => {
+      deductionList.forEach((item) => {
         const row = document.createElement('div');
-        row.className = 'flex items-center justify-between px-4 py-2 hover:bg-slate-50 group transition-all';
+        row.className = 'grid grid-cols-12 divide-x divide-slate-200 hover:bg-slate-50/80 group transition-all items-center py-1.5 px-3';
         row.innerHTML = `
-          <div class="flex-1 flex items-center gap-2">
-            <input 
-              type="text" 
-              value="${item.name}" 
-              placeholder="Nama Komponen"
-              onchange="updateDeductionName(${item.id}, this.value)"
-              class="w-full font-medium text-slate-700 editable-input px-1 py-0.5 rounded"
-            />
+          <div class="col-span-7 pr-2">
+            <span 
+              contenteditable="true" 
+              class="font-medium text-slate-700 block"
+              spellcheck="false"
+              onblur="updateDeductionName(${item.id}, this.innerText)"
+            >${item.name}</span>
           </div>
-          <div class="flex items-center gap-2 w-48 justify-end">
-            <span class="text-xs text-slate-400 font-medium">Rp</span>
-            <input 
-              type="text" 
-              value="${item.amount.toLocaleString('id-ID')}" 
-              placeholder="0"
-              onfocus="this.value = cleanNumber(this.value) || ''"
-              onblur="this.value = (cleanNumber(this.value)).toLocaleString('id-ID')"
-              oninput="updateDeductionAmount(${item.id}, this.value)"
-              class="w-32 text-right font-semibold text-slate-800 editable-input px-1 py-0.5 rounded"
-            />
+          <div class="col-span-5 pl-2 flex items-center justify-between">
+            <span class="text-xs text-slate-400 font-medium shrink-0">Rp</span>
+            <span 
+              contenteditable="true" 
+              class="font-semibold text-slate-800 text-right flex-1 mx-1"
+              spellcheck="false"
+              onfocus="this.innerText = cleanNumber(this.innerText) || ''"
+              onblur="handleDeductionAmountBlur(${item.id}, this)"
+              oninput="handleDeductionAmountInput(${item.id}, this)"
+            >${(item.amount || 0).toLocaleString('id-ID')}</span>
             <button 
               type="button" 
               onclick="removeDeductionRow(${item.id})" 
-              class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1 no-print btn-delete-row"
+              class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1 no-print btn-delete-row shrink-0"
               title="Hapus Baris"
             >
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
@@ -710,12 +633,21 @@
 
     function updateIncomeName(id, val) {
       const item = incomeList.find(x => x.id === id);
-      if (item) item.name = val;
+      if (item) item.name = val.trim() || 'Komponen';
     }
 
-    function updateIncomeAmount(id, val) {
+    function handleIncomeAmountInput(id, el) {
+      const num = cleanNumber(el.innerText);
       const item = incomeList.find(x => x.id === id);
-      if (item) item.amount = cleanNumber(val);
+      if (item) item.amount = num;
+      recalculateTotals();
+    }
+
+    function handleIncomeAmountBlur(id, el) {
+      const num = cleanNumber(el.innerText);
+      const item = incomeList.find(x => x.id === id);
+      if (item) item.amount = num;
+      el.innerText = num.toLocaleString('id-ID');
       recalculateTotals();
     }
 
@@ -735,12 +667,21 @@
 
     function updateDeductionName(id, val) {
       const item = deductionList.find(x => x.id === id);
-      if (item) item.name = val;
+      if (item) item.name = val.trim() || 'Komponen';
     }
 
-    function updateDeductionAmount(id, val) {
+    function handleDeductionAmountInput(id, el) {
+      const num = cleanNumber(el.innerText);
       const item = deductionList.find(x => x.id === id);
-      if (item) item.amount = cleanNumber(val);
+      if (item) item.amount = num;
+      recalculateTotals();
+    }
+
+    function handleDeductionAmountBlur(id, el) {
+      const num = cleanNumber(el.innerText);
+      const item = deductionList.find(x => x.id === id);
+      if (item) item.amount = num;
+      el.innerText = num.toLocaleString('id-ID');
       recalculateTotals();
     }
 
@@ -832,19 +773,20 @@
     function resetToDefaults() {
       if (!confirm('Kembalikan template ke pengaturan awal?')) return;
 
-      document.getElementById('company-name').value = 'Nama Perusahaan Anda';
-      document.getElementById('period-text').value = '01 Nov 2026 - 30 Nov 2026';
-      document.getElementById('employee-name').value = 'Nama Karyawan';
-      document.getElementById('employee-id').value = '123456789';
-      document.getElementById('employee-department').value = 'CEO';
-      document.getElementById('employee-job-title').value = 'Commissioner';
-      document.getElementById('employee-grade').value = 'BOD';
-      document.getElementById('employee-status').value = 'Tetap';
-      document.getElementById('employee-ptkp').value = 'TK0';
-      document.getElementById('employee-join-date').value = '11 Nov 2026';
-      document.getElementById('bank-name').value = 'BCA';
-      document.getElementById('bank-number').value = '12341234';
-      document.getElementById('bank-owner').value = 'Nama Pemilik Rekening';
+      document.getElementById('confidential-text').innerText = 'Pribadi & Rahasia';
+      document.getElementById('company-name').innerText = 'Nama Perusahaan Anda';
+      document.getElementById('period-text').innerText = '01 Nov 2026 - 30 Nov 2026';
+      document.getElementById('employee-name').innerText = 'Nama Karyawan';
+      document.getElementById('employee-id').innerText = '123456789';
+      document.getElementById('employee-department').innerText = 'CEO';
+      document.getElementById('employee-job-title').innerText = 'Commissioner';
+      document.getElementById('employee-grade').innerText = 'BOD';
+      document.getElementById('employee-status').innerText = 'Tetap';
+      document.getElementById('employee-ptkp').innerText = 'TK0';
+      document.getElementById('employee-join-date').innerText = '11 Nov 2026';
+      document.getElementById('bank-name').innerText = 'BCA';
+      document.getElementById('bank-number').innerText = '12341234';
+      document.getElementById('bank-owner').innerText = 'Nama Pemilik Rekening';
 
       removeLogo();
 
@@ -868,8 +810,8 @@
     // --- DOWNLOAD AS PDF (CLIENT-SIDE) ---
     async function handleDownloadPDF() {
       const element = document.getElementById('slip-printable-area');
-      const employeeName = document.getElementById('employee-name').value.trim() || 'Karyawan';
-      const period = document.getElementById('period-text').value.trim() || 'Periode';
+      const employeeName = document.getElementById('employee-name').innerText.trim() || 'Karyawan';
+      const period = document.getElementById('period-text').innerText.trim() || 'Periode';
       const cleanFileName = `Slip_Gaji_${employeeName.replace(/[^a-zA-Z0-9]/g, '_')}_${period.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
 
       // Show temporary loading indicator
@@ -921,9 +863,9 @@
 
     // --- SHARE VIA WHATSAPP ---
     function handleShareWhatsApp() {
-      const company = document.getElementById('company-name').value;
-      const employee = document.getElementById('employee-name').value;
-      const period = document.getElementById('period-text').value;
+      const company = document.getElementById('company-name').innerText;
+      const employee = document.getElementById('employee-name').innerText;
+      const period = document.getElementById('period-text').innerText;
       const totalIncome = document.getElementById('total-income-display').innerText;
       const totalDeduction = document.getElementById('total-deduction-display').innerText;
       const thp = document.getElementById('take-home-pay-display').innerText;
